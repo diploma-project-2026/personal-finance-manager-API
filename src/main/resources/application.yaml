@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: personal-finance-manager
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/personal_finance_manager
+    username: postgres
+    password: 123
+
+  liquibase:
+    enabled: true
+    change-log: classpath:database/changelog/db.changelog-master.yaml
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+
+
+logging:
+  level:
+    liquibase: INFO

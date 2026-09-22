@@ -1,0 +1,618 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-enums
+      author: student
+      changes:
+        - sql:
+            sql: |
+              CREATE TYPE transaction_type AS ENUM ('INCOME', 'EXPENSE');
+              CREATE TYPE receipt_status AS ENUM ('UPLOADED', 'PROCESSING', 'PROCESSED', 'FAILED', 'CONFIRMED');
+
+  - changeSet:
+      id: 002-create-currencies
+      author: student
+      changes:
+        - createTable:
+            tableName: currencies
+            columns:
+              - column:
+                  name: code
+                  type: VARCHAR(3)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 003-create-users
+      author: student
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+              - column:
+                  name: password_hash
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: default_currency_code
+                  type: VARCHAR(3)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: default_currency_code
+            referencedTableName: currencies
+            referencedColumnNames: code
+            constraintName: fk_users_default_currency
+
+  - changeSet:
+      id: 004-create-categories
+      author: student
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: type
+                  type: transaction_type
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: categories
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_categories_user
+
+        - addUniqueConstraint:
+            tableName: categories
+            columnNames: user_id, name, type
+            constraintName: uq_categories_user_name_type
+
+  - changeSet:
+      id: 005-create-transactions
+      author: student
+      changes:
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: amount
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: currency_code
+                  type: VARCHAR(3)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: transaction_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: transactions
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_transactions_user
+
+        - addForeignKeyConstraint:
+            baseTableName: transactions
+            baseColumnNames: category_id
+            referencedTableName: categories
+            referencedColumnNames: id
+            constraintName: fk_transactions_category
+
+        - addForeignKeyConstraint:
+            baseTableName: transactions
+            baseColumnNames: currency_code
+            referencedTableName: currencies
+            referencedColumnNames: code
+            constraintName: fk_transactions_currency
+
+        - createIndex:
+            tableName: transactions
+            indexName: idx_transactions_user_id
+            columns:
+              - column:
+                  name: user_id
+
+        - createIndex:
+            tableName: transactions
+            indexName: idx_transactions_category_id
+            columns:
+              - column:
+                  name: category_id
+
+        - createIndex:
+            tableName: transactions
+            indexName: idx_transactions_transaction_date
+            columns:
+              - column:
+                  name: transaction_date
+
+  - changeSet:
+      id: 006-create-transaction-conversions
+      author: student
+      changes:
+        - createTable:
+            tableName: transaction_conversions
+            columns:
+              - column:
+                  name: transaction_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: target_currency_code
+                  type: VARCHAR(3)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: exchange_rate
+                  type: DECIMAL(19,8)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: converted_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: transaction_conversions
+            baseColumnNames: transaction_id
+            referencedTableName: transactions
+            referencedColumnNames: id
+            constraintName: fk_transaction_conversions_transaction
+
+        - addForeignKeyConstraint:
+            baseTableName: transaction_conversions
+            baseColumnNames: target_currency_code
+            referencedTableName: currencies
+            referencedColumnNames: code
+            constraintName: fk_transaction_conversions_currency
+
+  - changeSet:
+      id: 007-create-budgets
+      author: student
+      changes:
+        - createTable:
+            tableName: budgets
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: budget_month
+                  type: DATE
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: limit_amount
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: currency_code
+                  type: VARCHAR(3)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: budgets
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_budgets_user
+
+        - addForeignKeyConstraint:
+            baseTableName: budgets
+            baseColumnNames: category_id
+            referencedTableName: categories
+            referencedColumnNames: id
+            constraintName: fk_budgets_category
+
+        - addForeignKeyConstraint:
+            baseTableName: budgets
+            baseColumnNames: currency_code
+            referencedTableName: currencies
+            referencedColumnNames: code
+            constraintName: fk_budgets_currency
+
+        - addUniqueConstraint:
+            tableName: budgets
+            columnNames: user_id, category_id, budget_month
+            constraintName: uq_budgets_user_category_month
+
+  - changeSet:
+      id: 008-create-financial-goals
+      author: student
+      changes:
+        - createTable:
+            tableName: financial_goals
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+
+              - column:
+                  name: target_amount
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: currency_code
+                  type: VARCHAR(3)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: target_date
+                  type: DATE
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: financial_goals
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_financial_goals_user
+
+        - addForeignKeyConstraint:
+            baseTableName: financial_goals
+            baseColumnNames: currency_code
+            referencedTableName: currencies
+            referencedColumnNames: code
+            constraintName: fk_financial_goals_currency
+
+        - createIndex:
+            tableName: financial_goals
+            indexName: idx_financial_goals_user_id
+            columns:
+              - column:
+                  name: user_id
+
+  - changeSet:
+      id: 009-create-goal-contributions
+      author: student
+      changes:
+        - createTable:
+            tableName: goal_contributions
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: goal_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: amount
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: contribution_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: goal_contributions
+            baseColumnNames: goal_id
+            referencedTableName: financial_goals
+            referencedColumnNames: id
+            constraintName: fk_goal_contributions_goal
+
+        - createIndex:
+            tableName: goal_contributions
+            indexName: idx_goal_contributions_goal_id
+            columns:
+              - column:
+                  name: goal_id
+
+        - createIndex:
+            tableName: goal_contributions
+            indexName: idx_goal_contributions_date
+            columns:
+              - column:
+                  name: contribution_date
+
+  - changeSet:
+      id: 010-create-receipts
+      author: student
+      changes:
+        - createTable:
+            tableName: receipts
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: transaction_id
+                  type: BIGINT
+                  constraints:
+                    unique: true
+
+              - column:
+                  name: image_path
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: status
+                  type: receipt_status
+                  defaultValue: UPLOADED
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: recognized_merchant
+                  type: VARCHAR(255)
+
+              - column:
+                  name: recognized_date
+                  type: DATE
+
+              - column:
+                  name: recognized_total
+                  type: DECIMAL(19,2)
+
+              - column:
+                  name: recognized_currency_code
+                  type: VARCHAR(3)
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: processed_at
+                  type: TIMESTAMP
+
+        - addForeignKeyConstraint:
+            baseTableName: receipts
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_receipts_user
+
+        - addForeignKeyConstraint:
+            baseTableName: receipts
+            baseColumnNames: transaction_id
+            referencedTableName: transactions
+            referencedColumnNames: id
+            constraintName: fk_receipts_transaction
+
+        - addForeignKeyConstraint:
+            baseTableName: receipts
+            baseColumnNames: recognized_currency_code
+            referencedTableName: currencies
+            referencedColumnNames: code
+            constraintName: fk_receipts_currency
+
+        - createIndex:
+            tableName: receipts
+            indexName: idx_receipts_user_id
+            columns:
+              - column:
+                  name: user_id
+
+        - createIndex:
+            tableName: receipts
+            indexName: idx_receipts_status
+            columns:
+              - column:
+                  name: status
