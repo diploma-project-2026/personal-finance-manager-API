@@ -15,7 +15,10 @@ spring:
     hibernate:
       ddl-auto: validate
 
-
+app:
+  currency:
+    default:
+      code: EUR
 
 logging:
   level:
