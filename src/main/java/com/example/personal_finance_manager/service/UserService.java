@@ -23,8 +23,8 @@ public class UserService {
   @Value("${app.currency.default.code}")
   private String DEFAULT_CURRENCY_CODE;
 
-    @Transactional
-    public void createUser(String email, String passwordHash) {
+  @Transactional
+  public void createUser(String email, String passwordHash) {
 
     if (userRepository.existsByEmail(email)) {
       throw new UserAlreadyExistsException();
@@ -42,8 +42,8 @@ public class UserService {
             .defaultCurrency(defaultCurrency)
             .build();
 
-        userRepository.save(user);
-    }
+    userRepository.save(user);
+  }
 
   @Transactional(readOnly = true)
   public User getUser(Long id) {
