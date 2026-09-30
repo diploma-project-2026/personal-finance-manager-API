@@ -15,10 +15,10 @@ import lombok.*;
 @Table(name = "currencies")
 public class Currency {
 
-    @Id
-    @Column(name = "code", length = 3)
-    private String code;
+  @Id
+  @Column(name = "code", length = 3)
+  private String code;
 
-    @Column(name = "name", nullable = false, length = 100)
-    private String name;
+  @Column(name = "name", nullable = false, length = 100)
+  private String name;
 }
