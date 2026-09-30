@@ -34,6 +34,7 @@ class UserServiceTest {
 
   @InjectMocks private UserService userService;
 
+  /** Configures the default currency on the service created by Mockito. */
   @BeforeEach
   void setUp() {
     ReflectionTestUtils.setField(userService, "DEFAULT_CURRENCY_CODE", DEFAULT_CURRENCY_CODE);
@@ -43,6 +44,7 @@ class UserServiceTest {
   // createUser
   // =========================
 
+  /** Verifies that a new user is saved with the supplied credentials and default currency. */
   @Test
   void createUser_shouldSaveUser_whenEmailDoesNotExistAndCurrencyExists() {
     // Arrange
@@ -70,6 +72,7 @@ class UserServiceTest {
     verify(currencyRepository).findById(DEFAULT_CURRENCY_CODE);
   }
 
+  /** Verifies that a duplicate email prevents currency lookup and user persistence. */
   @Test
   void createUser_shouldThrowUserAlreadyExistsException_whenEmailAlreadyExists() {
     // Arrange
@@ -85,6 +88,7 @@ class UserServiceTest {
     verify(userRepository, never()).save(any(User.class));
   }
 
+  /** Verifies that a missing default currency prevents user persistence. */
   @Test
   void createUser_shouldThrowCurrencyNotFoundException_whenDefaultCurrencyDoesNotExist() {
     // Arrange
@@ -106,6 +110,7 @@ class UserServiceTest {
   // getUser
   // =========================
 
+  /** Verifies that an existing user is returned from the repository. */
   @Test
   void getUser_shouldReturnUser_whenUserExists() {
     // Arrange
@@ -124,6 +129,7 @@ class UserServiceTest {
     verify(userRepository).findById(userId);
   }
 
+  /** Verifies that looking up a missing user raises UserNotFoundException. */
   @Test
   void getUser_shouldThrowUserNotFoundException_whenUserDoesNotExist() {
     // Arrange
@@ -141,6 +147,7 @@ class UserServiceTest {
   // updateUser
   // =========================
 
+  /** Verifies that an available email replaces the old email and updates the timestamp. */
   @Test
   void updateUser_shouldUpdateEmail_whenNewEmailIsValidAndNotTaken() {
     // Arrange
@@ -168,6 +175,7 @@ class UserServiceTest {
     verifyNoInteractions(currencyRepository);
   }
 
+  /** Verifies that keeping the current email skips the duplicate email check. */
   @Test
   void updateUser_shouldNotCheckEmailExistence_whenEmailHasNotChanged() {
     // Arrange
@@ -191,6 +199,7 @@ class UserServiceTest {
     verifyNoInteractions(currencyRepository);
   }
 
+  /** Verifies that a duplicate email is rejected without changing the current email. */
   @Test
   void updateUser_shouldThrowUserAlreadyExistsException_whenNewEmailIsAlreadyTaken() {
     // Arrange
@@ -216,6 +225,7 @@ class UserServiceTest {
     verifyNoInteractions(currencyRepository);
   }
 
+  /** Verifies that an existing currency replaces the default currency and updates the timestamp. */
   @Test
   void updateUser_shouldUpdateCurrency_whenCurrencyExists() {
     // Arrange
@@ -247,6 +257,7 @@ class UserServiceTest {
     verify(currencyRepository).findById(newCurrencyCode);
   }
 
+  /** Verifies that a missing currency is rejected without replacing the current currency. */
   @Test
   void updateUser_shouldThrowCurrencyNotFoundException_whenCurrencyDoesNotExist() {
     // Arrange
@@ -276,6 +287,9 @@ class UserServiceTest {
     verify(currencyRepository).findById(currencyCode);
   }
 
+  /**
+   * Verifies that blank fields leave email and currency unchanged while refreshing the timestamp.
+   */
   @Test
   void updateUser_shouldIgnoreBlankEmailAndBlankCurrencyCode() {
     // Arrange
@@ -307,6 +321,9 @@ class UserServiceTest {
     verifyNoInteractions(currencyRepository);
   }
 
+  /**
+   * Verifies that both profile fields change and the timestamp falls within the update interval.
+   */
   @Test
   void updateUser_shouldUpdateBothEmailAndCurrency() {
     // Arrange
@@ -351,6 +368,7 @@ class UserServiceTest {
     verify(currencyRepository).findById(newCurrencyCode);
   }
 
+  /** Verifies that updating a missing user fails before email or currency validation. */
   @Test
   void updateUser_shouldThrowUserNotFoundException_whenUserDoesNotExist() {
     // Arrange
@@ -372,6 +390,7 @@ class UserServiceTest {
   // deleteUser
   // =========================
 
+  /** Verifies that deletion passes the retrieved user to the repository. */
   @Test
   void deleteUser_shouldDeleteUser_whenUserExists() {
     // Arrange
@@ -389,6 +408,9 @@ class UserServiceTest {
     verify(userRepository).delete(user);
   }
 
+  /**
+   * Verifies that deleting a missing user raises an exception without invoking repository deletion.
+   */
   @Test
   void deleteUser_shouldThrowUserNotFoundException_whenUserDoesNotExist() {
     // Arrange

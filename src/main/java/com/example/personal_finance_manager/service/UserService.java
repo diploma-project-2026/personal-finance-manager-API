@@ -23,6 +23,14 @@ public class UserService {
   @Value("${app.currency.default.code}")
   private String DEFAULT_CURRENCY_CODE;
 
+  /**
+   * Persists a new user with the configured default currency.
+   *
+   * @param email the new user's email address
+   * @param passwordHash the already hashed password to store
+   * @throws UserAlreadyExistsException if the email is already registered
+   * @throws CurrencyNotFoundException if the configured default currency does not exist
+   */
   @Transactional
   public void createUser(String email, String passwordHash) {
 

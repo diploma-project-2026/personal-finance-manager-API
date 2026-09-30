@@ -15,6 +15,12 @@ public class UserController {
   private final UserService userService;
   private final UserMapper userMapper;
 
+  /**
+   * Retrieves a user's public profile.
+   *
+   * @param id the user ID
+   * @return the user's ID, email, and default currency code with HTTP 200
+   */
   @GetMapping("/{id}")
   public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
     User user = userService.getUser(id);
@@ -24,6 +30,13 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
+  /**
+   * Updates a user's email and default currency, ignoring null or blank fields.
+   *
+   * @param id the user ID
+   * @param request the requested email and currency code
+   * @return the updated public profile with HTTP 200
+   */
   @PutMapping("/{id}")
   public ResponseEntity<UserResponse> updateUser(
       @PathVariable Long id, @RequestBody UpdateUserRequest request) {
