@@ -53,4 +53,4 @@ jobs:
         run: chmod +x mvnw
 
       - name: 🔍 Compile project and run SpotBugs
-        run: ./mvnw --batch-mode --no-transfer-progress clean compile spotbugs:check --batch-mode --no-transfer-progress clean compile spotbugs:checkпе
+        run: ./mvnw --batch-mode --no-transfer-progress clean compile spotbugs:check
