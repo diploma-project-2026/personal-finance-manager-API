@@ -14,34 +14,52 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
         User user = userService.getUser(id);
-        return ResponseEntity.ok(user);
+
+        UserResponse response = new UserResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getDefaultCurrency().getCode()
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(
+    public ResponseEntity<UserResponse> updateUser(
             @PathVariable Long id,
-            @RequestParam String email,
-            @RequestParam(required = false) String currencyCode
+            @RequestBody UpdateUserRequest request
     ) {
-        User updatedUser = userService.updateUser(id, email, currencyCode);
-        return ResponseEntity.ok(updatedUser);
-    }
+        User updatedUser = userService.updateUser(
+                id,
+                request.email(),
+                request.currencyCode()
+        );
 
-    @PostMapping("/new")
-    public ResponseEntity<User> createUser(
-            @RequestParam String email,
-            @RequestParam String password
-    ){
-        User createUser = userService.createUser(email, password);
-        return ResponseEntity.ok(createUser);
-    }
+        UserResponse response = new UserResponse(
+                updatedUser.getId(),
+                updatedUser.getEmail(),
+                updatedUser.getDefaultCurrency().getCode()
+        );
 
+        return ResponseEntity.ok(response);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    public record UpdateUserRequest(
+            String email,
+            String currencyCode
+    ) {}
+
+    public record UserResponse(
+            Long id,
+            String email,
+            String currencyCode
+    ) {}
 }
