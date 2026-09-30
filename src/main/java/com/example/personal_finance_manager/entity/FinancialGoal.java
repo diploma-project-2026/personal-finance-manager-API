@@ -1,13 +1,12 @@
 package com.example.personal_finance_manager.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Setter
 @Getter
@@ -18,35 +17,35 @@ import java.time.LocalDateTime;
 @Table(name = "financial_goals")
 public class FinancialGoal {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @Column(name = "name", nullable = false, length = 150)
-    private String name;
+  @Column(name = "name", nullable = false, length = 150)
+  private String name;
 
-    @Column(name = "description", length = 500)
-    private String description;
+  @Column(name = "description", length = 500)
+  private String description;
 
-    @Column(name = "target_amount", nullable = false, precision = 19, scale = 2)
-    private BigDecimal targetAmount;
+  @Column(name = "target_amount", nullable = false, precision = 19, scale = 2)
+  private BigDecimal targetAmount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "currency_code", nullable = false)
-    private Currency currency;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "currency_code", nullable = false)
+  private Currency currency;
 
-    @Column(name = "target_date")
-    private LocalDate targetDate;
+  @Column(name = "target_date")
+  private LocalDate targetDate;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+  @CreationTimestamp
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+  @UpdateTimestamp
+  @Column(name = "updated_at", nullable = false)
+  private LocalDateTime updatedAt;
 }
