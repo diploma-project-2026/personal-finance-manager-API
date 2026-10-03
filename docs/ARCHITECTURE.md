@@ -4,56 +4,68 @@
 
 Этот файл описывает архитектуру дипломного проекта **Personal Finance Manager**:
 
-- какие части есть в системе;
-- за что отвечает каждая часть;
-- как компоненты взаимодействуют между собой;
-- какие данные куда идут;
-- где находится основная бизнес-логика;
-- где находится ML-логика;
+- какие компоненты есть в системе;
+- за что отвечает каждый компонент;
+- как компоненты взаимодействуют;
+- где хранится структурированная информация;
+- где хранятся изображения чеков;
+- как выполняется ML-обработка чеков;
 - как проект будет запускаться и разворачиваться.
 
 Главная цель архитектуры — сделать проект понятным до начала активной разработки.
 
 ---
 
-## 2. Общая архитектура системы
-
-На высоком уровне приложение состоит из четырёх основных компонентов:
+## 2. Итоговая архитектура системы
 
 ```text
-                    ┌──────────────────┐
-                    │      User        │
-                    │   Web Browser    │
-                    └────────┬─────────┘
-                             │
-                             │ HTTPS
-                             ↓
-                    ┌──────────────────┐
-                    │      React       │
-                    │     Frontend     │
-                    └────────┬─────────┘
-                             │
-                             │ REST API / JSON
-                             ↓
-                    ┌──────────────────┐
-                    │   Spring Boot    │
-                    │   Java Backend   │
-                    └───────┬─────┬────┘
-                            │     │
-                       SQL  │     │ HTTP
-                            │     │
-                            ↓     ↓
-                  ┌────────────┐  ┌──────────────────┐
-                  │ PostgreSQL │  │ Python ML Service│
-                  │  Database  │  │     FastAPI      │
-                  └────────────┘  └────────┬─────────┘
-                                           │
-                                           ↓
-                                  ┌──────────────────┐
-                                  │   ML Model       │
-                                  │ Receipt Analysis │
-                                  └──────────────────┘
+                         USER
+                          │
+                          ↓
+                    ┌─────────────┐
+                    │    React    │
+                    │  Frontend   │
+                    └──────┬──────┘
+                           │
+                        REST API
+                           │
+                           ↓
+                    ┌─────────────┐
+                    │ Spring Boot │
+                    │   Backend   │
+                    └───┬─────┬───┘
+                        │     │
+                 JPA/SQL│     │ S3 API
+                        │     │
+                        ↓     ↓
+                 ┌──────────┐ ┌───────────────────┐
+                 │PostgreSQL│ │  Object Storage   │
+                 │ Database │ │ MinIO / Amazon S3 │
+                 └────┬─────┘ └─────────┬─────────┘
+                      │                 │
+                      │                 │
+                      └────────┬────────┘
+                               │
+                               ↓
+                     ┌──────────────────┐
+                     │ Python ML Worker │
+                     └────────┬─────────┘
+                              │
+                              ↓
+                     ┌──────────────────┐
+                     │     ML Model     │
+                     │ Receipt Analysis │
+                     └──────────────────┘
 ```
+
+Главное архитектурное решение:
+
+> **Spring Boot и Python ML Worker не общаются напрямую.**
+
+Их взаимодействие происходит через:
+
+- PostgreSQL;
+- Object Storage.
 
 ---
 
@@ -61,43 +73,30 @@
 
 ### 3.1. React Frontend
 
-Frontend — это часть приложения, которую видит пользователь.
+Frontend — часть приложения, которую видит пользователь.
 
 Основные задачи:
 
 - регистрация и вход;
-- отображение dashboard;
-- формы для доходов и расходов;
-- просмотр списка транзакций;
+- dashboard;
+- создание и просмотр транзакций;
 - работа с категориями;
-- создание бюджетов;
-- создание финансовых целей;
-- отображение графиков и статистики;
-- загрузка фотографии чека;
-- отображение результата распознавания;
-- подтверждение или исправление данных.
+- управление бюджетами;
+- управление финансовыми целями;
+- отображение статистики;
+- загрузка фотографий чеков;
+- отображение статуса обработки чека;
+- просмотр и подтверждение распознанных данных.
 
-Frontend **не должен содержать основную бизнес-логику**.
-
-Например frontend может показать:
-
-```text
-Budget: 300 EUR
-Spent: 220 EUR
-Remaining: 80 EUR
-```
-
-Но вычисление `Remaining` желательно выполнять на backend.
+Frontend не должен содержать основную бизнес-логику.
 
 ---
 
 ## 4. Spring Boot Backend
 
-Spring Boot — главный компонент системы.
+Spring Boot — главный backend-компонент системы.
 
-Именно backend отвечает за основную бизнес-логику.
-
-Примерная ответственность:
+Он отвечает за:
 
 ```text
 Spring Boot
@@ -108,11 +107,12 @@ Spring Boot
 ├── Categories
 ├── Budgets
 ├── Financial Goals
+├── Goal Contributions
 ├── Analytics
-├── Receipt Processing
+├── Receipt Management
+├── File Upload
 ├── Database Access
-├── Security
-└── Communication with ML Service
+└── Security
 ```
 
 Backend:
@@ -121,17 +121,20 @@ Backend:
 - проверяет данные;
 - проверяет права пользователя;
 - выполняет бизнес-логику;
-- читает и сохраняет данные в PostgreSQL;
-- при необходимости отправляет чек в Python ML Service;
-- возвращает результат frontend.
+- работает с PostgreSQL;
+- загружает изображения чеков в Object Storage;
+- получает уже обработанные результаты чеков из PostgreSQL;
+- после подтверждения пользователя создаёт Transaction.
+
+Spring Boot не запускает ML-модель и не вызывает Python напрямую.
 
 ---
 
 ## 5. PostgreSQL
 
-PostgreSQL хранит постоянные данные приложения.
+PostgreSQL хранит структурированные данные приложения.
 
-Предварительно база будет содержать:
+Основные таблицы:
 
 ```text
 users
@@ -139,128 +142,126 @@ categories
 transactions
 budgets
 financial_goals
+goal_contributions
 receipts
 ```
 
-Возможны дополнительные таблицы после проектирования БД.
+В таблице `receipts` хранятся:
 
-PostgreSQL отвечает только за хранение данных.
+- пользователь;
+- ссылка на Transaction;
+- storage key изображения;
+- статус обработки;
+- распознанный магазин;
+- распознанная дата;
+- распознанная сумма;
+- даты создания и обработки.
 
-Бизнес-правила не должны находиться в базе без необходимости.
-
-Например:
-
-```text
-"Пользователь не может получить транзакции другого пользователя"
-```
-
-это правило backend, а не PostgreSQL.
-
----
-
-## 6. Python ML Service
-
-Python-сервис существует отдельно от Java backend.
-
-Его основная задача:
-
-> обработать изображение чека и вернуть структурированные данные.
-
-Пример:
-
-```text
-Input:
-receipt.jpg
-
-Output:
-{
-  "merchant": "LIDL",
-  "date": "2026-09-21",
-  "total": 24.73,
-  "currency": "EUR"
-}
-```
-
-Python Service:
-
-- принимает изображение;
-- выполняет preprocessing при необходимости;
-- запускает ML-модель;
-- преобразует результат модели в JSON;
-- возвращает результат Spring Boot.
-
-Python-сервис **не должен** заниматься:
-
-- регистрацией пользователей;
-- бюджетами;
-- финансовыми целями;
-- основными транзакциями;
-- общей бизнес-логикой приложения.
-
-Это остаётся в Java.
+Сами изображения чеков в PostgreSQL не хранятся.
 
 ---
 
-## 7. Почему ML вынесен отдельно
+## 6. Object Storage
 
-ML часть отделяется от Java backend по нескольким причинам.
+Изображения чеков хранятся отдельно в S3-compatible Object Storage.
 
-### Причина 1 — Python ecosystem
-
-Большинство библиотек для ML проще использовать в Python:
+Варианты:
 
 ```text
-PyTorch
-Transformers
-Hugging Face
-FastAPI
+Development:
+MinIO
+
+Production:
+Amazon S3
 ```
 
-### Причина 2 — независимость компонентов
-
-Spring Boot может развиваться независимо от ML-модели.
-
-### Причина 3 — отдельное масштабирование
-
-В будущем можно отдельно масштабировать ML Service.
-
-### Причина 4 — архитектурная ясность
-
-Java отвечает за бизнес-логику.
-
-Python отвечает за ML.
-
----
-
-## 8. Взаимодействие компонентов
-
-### Обычный запрос
-
-Например пользователь хочет получить список своих расходов.
+Пример ключа:
 
 ```text
-React
-  │
-  │ GET /api/transactions
-  ↓
-Spring Boot
-  │
-  │ SQL query
-  ↓
+receipts/42/125/receipt.jpg
+```
+
+В PostgreSQL хранится только:
+
+```text
+storage_key = receipts/42/125/receipt.jpg
+```
+
+Разделение:
+
+```text
 PostgreSQL
-  │
-  │ rows
-  ↑
-Spring Boot
-  │
-  │ JSON
-  ↑
-React
+→ structured data
+
+Object Storage
+→ receipt images
 ```
 
 ---
 
-## 9. Сценарий: добавление расхода вручную
+## 7. Python ML Worker
+
+Python работает как отдельный асинхронный worker.
+
+Он отвечает только за обработку чеков.
+
+Python Worker:
+
+1. периодически проверяет PostgreSQL;
+2. ищет чек со статусом `UPLOADED`;
+3. меняет статус на `PROCESSING`;
+4. получает `storage_key`;
+5. скачивает изображение из Object Storage;
+6. запускает preprocessing;
+7. запускает ML-модель;
+8. получает merchant, date и total;
+9. записывает результат обратно в PostgreSQL;
+10. меняет статус на `PROCESSED`;
+11. при ошибке меняет статус на `FAILED`.
+
+Python не создаёт Transaction и не выполняет основную бизнес-логику приложения.
+
+---
+
+## 8. Статусы чека
+
+```text
+UPLOADED
+    │
+    ↓
+PROCESSING
+    │
+    ├────────→ FAILED
+    │
+    ↓
+PROCESSED
+    │
+    ↓
+CONFIRMED
+```
+
+Значение статусов:
+
+```text
+UPLOADED
+→ файл загружен и ожидает обработки
+
+PROCESSING
+→ Python Worker обрабатывает чек
+
+PROCESSED
+→ данные успешно распознаны
+
+FAILED
+→ обработка завершилась ошибкой
+
+CONFIRMED
+→ пользователь подтвердил данные и создана Transaction
+```
+
+---
+
+## 9. Сценарий: добавление транзакции вручную
 
 ```text
 User
@@ -282,11 +283,10 @@ Response
 React
 ```
 
-Пример запроса:
+Пример:
 
 ```json
 {
-  "type": "EXPENSE",
   "amount": 15.60,
   "categoryId": 3,
   "date": "2026-09-21",
@@ -294,11 +294,13 @@ React
 }
 ```
 
+Все денежные значения хранятся в EUR.
+
 ---
 
-## 10. Сценарий: загрузка чека
+## 10. Сценарий: загрузка и обработка чека
 
-Это один из наиболее важных сценариев проекта.
+### Этап 1 — загрузка
 
 ```text
 User
@@ -308,64 +310,96 @@ React
 POST /api/receipts
  ↓
 Spring Boot
- ↓
-Python ML Service
- ↓
+ ├────────────→ Object Storage
+ │               save image
+ │
+ └────────────→ PostgreSQL
+                 save receipt
+                 status = UPLOADED
+```
+
+Spring Boot после этого больше не участвует в ML-обработке.
+
+### Этап 2 — обработка
+
+```text
+Python ML Worker
+       │
+       │ find UPLOADED receipt
+       ↓
+PostgreSQL
+       │
+       │ storage_key
+       ↓
+Python ML Worker
+       │
+       │ download image
+       ↓
+Object Storage
+       │
+       ↓
 ML Model
- ↓
-Python ML Service
- ↓
-Spring Boot
- ↓
+       │
+       ↓
+Recognition Result
+       │
+       ↓
+PostgreSQL
+```
+
+### Этап 3 — подтверждение
+
+```text
 React
  ↓
-User confirms data
+GET /api/receipts/{id}
  ↓
 Spring Boot
  ↓
 PostgreSQL
+ ↓
+recognized data
+ ↓
+React
+ ↓
+User confirms / edits
+ ↓
+Spring Boot
+ ↓
+Create Transaction
+ ↓
+receipt.status = CONFIRMED
 ```
-
-Подробно:
-
-1. Пользователь загружает фото.
-2. React отправляет файл Spring Boot.
-3. Spring Boot проверяет файл.
-4. Spring Boot отправляет его Python Service.
-5. Python Service запускает ML-модель.
-6. ML-модель возвращает найденные поля.
-7. Python формирует JSON.
-8. Spring Boot получает результат.
-9. React показывает результат пользователю.
-10. Пользователь исправляет данные при необходимости.
-11. После подтверждения Spring Boot создаёт Transaction.
-12. Данные сохраняются в PostgreSQL.
 
 ---
 
-## 11. Почему не сохранять распознанный чек автоматически
+## 11. Почему чек не сохраняется автоматически как Transaction
 
 ML-модель может ошибаться.
 
-Поэтому лучше использовать схему:
+Поэтому используется схема:
 
 ```text
 Recognition
    ↓
 Preview
    ↓
+User correction
+   ↓
 User confirmation
    ↓
-Save
+Create Transaction
 ```
 
-Это позволяет избежать ошибочных транзакций.
+Python только распознаёт данные.
+
+Spring Boot создаёт Transaction только после подтверждения пользователя.
 
 ---
 
-## 12. Backend layering
+## 12. Backend Layering
 
-Внутри Spring Boot проект желательно разделить на слои.
+Spring Boot делится на слои:
 
 ```text
 Controller
@@ -386,35 +420,29 @@ Database
 ```text
 POST /api/transactions
 GET /api/transactions
-DELETE /api/transactions/{id}
+POST /api/receipts
+GET /api/receipts/{id}
 ```
-
-Controller не должен содержать сложную бизнес-логику.
 
 ### Service
 
-Главное место бизнес-логики.
+Содержит бизнес-логику.
 
 Пример:
 
 ```text
 TransactionService
+CategoryService
 BudgetService
 GoalService
 ReceiptService
 AnalyticsService
+StorageService
 ```
-
-Именно Service решает:
-
-- можно ли выполнить действие;
-- что нужно посчитать;
-- какие данные сохранить;
-- какие другие сервисы вызвать.
 
 ### Repository
 
-Работает с базой данных.
+Работает с PostgreSQL.
 
 Пример:
 
@@ -426,10 +454,6 @@ BudgetRepository
 GoalRepository
 ReceiptRepository
 ```
-
-Repository не решает бизнес-задачи.
-
-Он предоставляет доступ к данным.
 
 ---
 
@@ -450,12 +474,12 @@ backend/
         │       ├── config/
         │       ├── security/
         │       ├── exception/
-        │       └── client/
+        │       └── storage/
         │
         └── resources/
             ├── application.yml
             └── db/
-                └── migration/
+                └── changelog/
 ```
 
 ---
@@ -474,7 +498,7 @@ frontend/
     └── router/
 ```
 
-Пример страниц:
+Основные страницы:
 
 ```text
 LoginPage
@@ -484,22 +508,21 @@ TransactionsPage
 CategoriesPage
 BudgetsPage
 GoalsPage
-AnalyticsPage
 ReceiptUploadPage
 ```
 
 ---
 
-## 15. Предварительная структура ML Service
+## 15. Предварительная структура Python Worker
 
 ```text
-ml-service/
+ml-worker/
 ├── app/
-│   ├── main.py
-│   ├── api/
+│   ├── worker.py
+│   ├── database/
+│   ├── storage/
 │   ├── service/
-│   ├── model/
-│   └── schemas/
+│   └── model/
 │
 ├── training/
 │   ├── dataset/
@@ -510,27 +533,17 @@ ml-service/
 └── Dockerfile
 ```
 
-Логически ML-проект можно разделить на две части:
+`training/` используется для fine-tuning.
 
-```text
-training/
-```
+`app/` используется для обработки чеков.
 
-для fine-tuning,
-
-и:
-
-```text
-app/
-```
-
-для запуска уже обученной модели.
+FastAPI не обязателен, так как Spring Boot напрямую Python не вызывает.
 
 ---
 
 ## 16. API между frontend и backend
 
-Frontend общается только с Spring Boot.
+Frontend общается только со Spring Boot.
 
 Пример:
 
@@ -544,66 +557,19 @@ Frontend общается только с Spring Boot.
 /api/receipts
 ```
 
-React **не должен напрямую обращаться к PostgreSQL**.
-
-React также желательно **не должен напрямую обращаться к Python ML Service**.
-
-Правильный путь:
+React не обращается напрямую к:
 
 ```text
-React
- ↓
-Spring Boot
- ↓
-Python
+PostgreSQL
+Object Storage
+Python Worker
 ```
-
-Spring Boot остаётся единым входом в backend.
 
 ---
 
-## 17. API между Java и Python
-
-Spring Boot вызывает Python ML Service через HTTP.
-
-Пример:
-
-```text
-POST /recognize
-```
-
-Input:
-
-```text
-multipart/form-data
-file = receipt.jpg
-```
-
-Output:
-
-```json
-{
-  "merchant": "LIDL",
-  "date": "2026-09-21",
-  "total": 24.73,
-  "currency": "EUR"
-}
-```
-
-В Spring Boot для этого позже можно использовать:
-
-- RestClient;
-- WebClient.
-
-Выбор можно сделать позже.
-
----
-
-## 18. Authentication и Security
+## 17. Authentication и Security
 
 Пользователь должен иметь доступ только к своим данным.
-
-Общая схема:
 
 ```text
 Register
@@ -615,134 +581,95 @@ Authentication
 Protected API
 ```
 
-Spring Security будет проверять пользователя перед доступом к защищённым endpoints.
-
-Например:
+Spring Security должен предотвращать доступ пользователя к чужим:
 
 ```text
-User A
+transactions
+budgets
+goals
+receipts
+custom categories
 ```
 
-не должен получить:
-
-```text
-transactions of User B
-```
-
-даже если вручную подставит чужой ID в запрос.
+Receipt images также не должны быть публично доступны.
 
 ---
 
-## 19. DTO
+## 18. DTO
 
-Frontend не должен напрямую работать с Entity из базы данных.
+Frontend не работает напрямую с Entity.
 
-Для обмена данными будут использоваться DTO.
+```text
+Entity
+   ↓
+DTO
+   ↓
+JSON
+   ↓
+React
+```
+
+DTO позволяют:
+
+- скрывать внутренние поля;
+- контролировать формат API;
+- валидировать входящие данные;
+- не связывать frontend напрямую со структурой БД.
+
+---
+
+## 19. Database migrations
+
+Структура базы контролируется через Liquibase.
 
 Пример:
 
 ```text
-Transaction Entity
-        ↓
-TransactionResponse DTO
-        ↓
-JSON
-        ↓
-React
+db/changelog/
+│
+├── db.changelog-master.yaml
+├── 001-create-users.yaml
+├── 002-create-categories.yaml
+├── 003-create-transactions.yaml
+└── ...
 ```
-
-Это помогает:
-
-- скрывать ненужные поля;
-- контролировать формат API;
-- отдельно валидировать входящие данные;
-- не связывать структуру БД напрямую с frontend.
 
 ---
 
-## 20. Database migrations
-
-Структура базы будет контролироваться через Flyway.
-
-```text
-V1__init.sql
-V2__add_receipts.sql
-V3__add_indexes.sql
-```
-
-Процесс:
-
-```text
-Application start
-      ↓
-Flyway checks migrations
-      ↓
-Missing migrations are executed
-      ↓
-Database is updated
-```
-
-Это позволяет одинаково создавать структуру БД на разных компьютерах.
-
----
-
-## 21. Containerization architecture
-
-Позже каждый основной компонент можно запускать в отдельном Docker container.
+## 20. Containerization Architecture
 
 ```text
 Docker Compose
 │
 ├── frontend
 ├── backend
-├── ml-service
-└── postgres
+├── ml-worker
+├── postgres
+└── minio
 ```
 
 Общая схема:
 
 ```text
-┌──────────────── Docker Network ────────────────┐
-│                                               │
-│ React  ──────→ Spring Boot ──────→ PostgreSQL │
-│                    │                          │
-│                    └────────→ Python ML       │
-│                                               │
-└───────────────────────────────────────────────┘
+┌────────────────── Docker Network ──────────────────┐
+│                                                    │
+│ React ─────→ Spring Boot ─────→ PostgreSQL         │
+│                  │                  ↑               │
+│                  │                  │               │
+│                  ↓                  │               │
+│                MinIO ←────── Python Worker          │
+│                                  │                 │
+│                                  ↓                 │
+│                               ML Model             │
+│                                                    │
+└────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 22. Почему отдельный container для каждого компонента
-
-Так каждый компонент:
-
-- имеет собственное окружение;
-- может обновляться отдельно;
-- имеет свои зависимости;
-- не мешает другим компонентам;
-- проще запускать на другой машине.
-
-Например:
-
-```text
-backend container
-→ Java
-
-ml-service container
-→ Python + PyTorch
-
-postgres container
-→ PostgreSQL
-```
-
----
-
-## 23. CI/CD architecture
+## 21. CI/CD Architecture
 
 GitHub Actions может использоваться для автоматизации.
-
-Примерный pipeline:
 
 ```text
 git push / pull request
@@ -753,59 +680,40 @@ Backend tests
         ↓
 Frontend build/tests
         ↓
-ML Service checks
+Python checks/tests
         ↓
 Docker build
         ↓
 Deployment
 ```
 
-Если тесты не проходят:
-
-```text
-Tests FAILED
-     ↓
-Deployment STOPPED
-```
-
-Deployment можно добавить после того, как основное приложение будет готово.
-
 ---
 
-## 24. Testing architecture
+## 22. Testing Architecture
 
-Тестирование будет находиться на нескольких уровнях.
-
-### Unit tests
-
-Проверка отдельных Java-классов.
-
-Пример:
+### Unit Tests
 
 ```text
-BudgetServiceTest
 TransactionServiceTest
+BudgetServiceTest
+ReceiptServiceTest
+StorageServiceTest
 ```
 
-### Integration tests
-
-Проверка нескольких компонентов вместе.
-
-Например:
+### Integration Tests
 
 ```text
 Spring Boot + PostgreSQL
+Spring Boot + MinIO
+Python Worker + PostgreSQL
+Python Worker + MinIO
 ```
 
-### API tests
+### API Tests
 
-Проверка endpoints.
+Проверка REST endpoints.
 
-### ML evaluation
-
-Отдельная оценка качества модели.
-
-Например:
+### ML Evaluation
 
 ```text
 Before fine-tuning
@@ -815,15 +723,14 @@ After fine-tuning
 
 ---
 
-## 25. Ошибки и обработка ошибок
+## 23. Ошибки и обработка ошибок
 
-Backend должен возвращать понятные HTTP status codes.
-
-Пример:
+Backend возвращает стандартные HTTP status codes:
 
 ```text
 200 OK
 201 Created
+202 Accepted
 400 Bad Request
 401 Unauthorized
 403 Forbidden
@@ -831,53 +738,36 @@ Backend должен возвращать понятные HTTP status codes.
 500 Internal Server Error
 ```
 
-Например если Python ML Service недоступен:
+Если Python Worker временно не работает:
 
 ```text
-ReceiptService
-   ↓
-ML Service unavailable
-   ↓
-Spring handles error
-   ↓
-User sees:
-"Не удалось распознать чек. Попробуйте позже."
+Receipt remains:
+status = UPLOADED
 ```
 
-Приложение не должно полностью падать из-за недоступности ML Service.
+Когда worker снова запустится, он сможет продолжить обработку.
 
 ---
 
-## 26. Архитектурный принцип: ML не должен быть обязательным для всей системы
+## 24. ML не должен быть обязательным для всей системы
 
-Основной Personal Finance Manager должен работать даже без ML.
-
-То есть:
+Даже если Python Worker не работает:
 
 ```text
-Manual transactions ✅
-Budgets ✅
-Goals ✅
-Analytics ✅
+Manual Transactions ✅
+Categories          ✅
+Budgets             ✅
+Financial Goals     ✅
+Analytics           ✅
+Receipt Upload      ✅
+Receipt Recognition ⏳
 ```
 
-могут работать независимо.
-
-Если ML Service временно не работает:
-
-```text
-Receipt Recognition ❌
-```
-
-но остальная система продолжает работать.
-
-Это важное архитектурное решение.
+Основная часть Personal Finance Manager продолжает работать.
 
 ---
 
-## 27. Основные сущности системы
-
-Пока предполагаются следующие основные сущности:
+## 25. Основные сущности системы
 
 ```text
 User
@@ -885,218 +775,176 @@ Category
 Transaction
 Budget
 FinancialGoal
+GoalContribution
 Receipt
 ```
 
-Связи будут окончательно определены в `DATABASE.md`.
-
-Предварительно:
+Предварительные связи:
 
 ```text
 User
 │
-├── Categories
+├── Custom Categories
 ├── Transactions
 ├── Budgets
-├── FinancialGoals
+├── Financial Goals
 └── Receipts
+
+Financial Goal
+│
+└── Goal Contributions
+
+Receipt
+│
+└── optional Transaction
 ```
 
 ---
 
-## 28. Основная бизнес-логика
-
-Примеры логики, которая будет находиться в Spring Boot:
+## 26. Основная бизнес-логика
 
 ### Transaction
 
-- принадлежит конкретному пользователю;
-- имеет тип income или expense;
-- имеет сумму;
-- может иметь категорию;
-- входит в статистику.
+- принадлежит пользователю;
+- содержит сумму;
+- относится к категории;
+- имеет дату;
+- может иметь description;
+- участвует в статистике.
+
+### Category
+
+- может быть default;
+- может принадлежать конкретному пользователю;
+- имеет тип INCOME или EXPENSE.
 
 ### Budget
 
-- относится к пользователю;
-- может относиться к категории;
-- имеет лимит;
-- имеет период;
-- рассчитывает использованную сумму.
+- принадлежит пользователю;
+- относится к категории;
+- имеет месячный лимит;
+- используется для расчёта spent и remaining.
 
 ### Financial Goal
 
-- имеет целевую сумму;
-- имеет текущий прогресс;
-- принадлежит пользователю.
+- принадлежит пользователю;
+- имеет target amount;
+- может иметь target date;
+- содержит contributions.
 
 ### Receipt
 
-- относится к пользователю;
-- содержит данные распознавания;
-- может быть связан с Transaction.
+- принадлежит пользователю;
+- содержит storage key;
+- имеет processing status;
+- содержит распознанные данные;
+- после подтверждения может быть связан с Transaction.
 
 ---
 
-## 29. Возможные дополнительные функции
+## 27. Возможные дополнительные функции
 
-Если основной проект окажется недостаточно сложным, архитектура должна позволять добавить:
-
-### Recurring Payments
+Позже можно добавить:
 
 ```text
-Transaction History
-        ↓
-Analysis
-        ↓
-Recurring Payments
+Automatic retry for FAILED receipts
+Multiple Python workers
+RabbitMQ / Kafka / SQS
+Recurring payments
+Spending anomaly detection
+Spending forecast
 ```
 
-### Spending Anomaly Detection
-
-```text
-Historical Expenses
-        ↓
-Normal Spending Level
-        ↓
-Current Spending
-        ↓
-Alert
-```
-
-### Spending Forecast
-
-```text
-Previous Months
-       ↓
-Analysis / ML
-       ↓
-Future Expense Forecast
-```
-
-Эти функции не должны усложнять начальную версию проекта.
+Эти функции не нужны для первой версии проекта.
 
 ---
 
-## 30. Что будет разрабатываться сначала
-
-Архитектура предполагает следующий порядок:
+## 28. Порядок разработки
 
 ```text
 1. Database Design
        ↓
 2. Spring Boot + PostgreSQL
        ↓
-3. Core Backend
+3. Authentication
        ↓
-4. Authentication
+4. Transactions / Categories
        ↓
-5. Transactions / Categories
+5. Budgets / Goals / Analytics
        ↓
-6. Budgets / Goals / Analytics
+6. React Frontend
        ↓
-7. React Frontend
+7. Object Storage
        ↓
-8. ML Research
+8. Receipt Upload
        ↓
-9. Python Service
+9. ML Research / Training
        ↓
-10. Java + Python Integration
+10. Python Worker
        ↓
-11. Docker
+11. Async Receipt Processing
        ↓
-12. CI/CD
+12. Docker Compose
+       ↓
+13. CI/CD
 ```
 
 ---
 
-## 31. Что пока НЕ фиксируется окончательно
+## 29. Что пока не фиксируется окончательно
 
-Следующие решения можно принять позже:
+Можно решить позже:
 
-- конкретная pretrained ML-модель;
-- конкретный dataset;
+- конкретную pretrained ML-модель;
+- dataset;
 - JWT или другой механизм авторизации;
-- RestClient или WebClient;
-- библиотека графиков на frontend;
-- способ deployment;
+- MinIO или Amazon S3 для production;
 - cloud provider;
-- точный формат хранения изображений чеков;
-- будет ли Java backend multi-module Maven проектом.
-
-Не нужно принимать все архитектурные решения заранее.
-
----
-
-## 32. Итоговая схема проекта
-
-```text
-                         USER
-                          │
-                          ↓
-                   ┌─────────────┐
-                   │    React    │
-                   │  Frontend   │
-                   └──────┬──────┘
-                          │
-                       REST API
-                          │
-                          ↓
-                   ┌─────────────┐
-                   │ Spring Boot │
-                   │   Backend   │
-                   └───┬─────┬───┘
-                       │     │
-             JPA / SQL │     │ HTTP
-                       │     │
-                       ↓     ↓
-                ┌──────────┐ ┌───────────────┐
-                │PostgreSQL│ │ Python FastAPI│
-                └──────────┘ └───────┬───────┘
-                                     │
-                                     ↓
-                              ┌─────────────┐
-                              │ Fine-tuned  │
-                              │  ML Model   │
-                              └─────────────┘
-
-
-                   Infrastructure
-
-               Docker + Docker Compose
-                        │
-                 GitHub Actions
-                        │
-                      CI/CD
-```
+- deployment platform;
+- retry strategy;
+- количество Python workers;
+- нужен ли в будущем message broker.
 
 ---
 
-## 33. Главное архитектурное правило проекта
+## 30. Главное архитектурное правило
 
 У каждого компонента должна быть понятная ответственность:
 
 ```text
 React
-→ отображение и действия пользователя
+→ UI и действия пользователя
 
 Spring Boot
 → бизнес-логика и основной API
 
 PostgreSQL
-→ хранение данных
+→ структурированные данные и состояние обработки
 
-Python
-→ ML inference
+Object Storage
+→ изображения чеков
 
-ML model
+Python Worker
+→ асинхронная обработка чеков
+
+ML Model
 → распознавание данных чека
 
 Docker
-→ запуск окружения
+→ окружение
 
 CI/CD
-→ автоматизация сборки, тестирования и deployment
+→ сборка, тестирование и deployment
 ```
 
-Если при разработке непонятно, куда должна относиться новая логика, сначала нужно определить, **какой компонент отвечает за эту задачу**, и только потом писать код.
+Главное правило взаимодействия:
+
+```text
+Spring Boot
+    ↓
+PostgreSQL + Object Storage
+    ↑
+Python Worker
+```
+
+Spring Boot и Python не зависят друг от друга напрямую.
