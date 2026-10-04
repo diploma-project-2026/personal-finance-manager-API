@@ -19,53 +19,63 @@
 ## 2. Итоговая архитектура системы
 
 ```text
-                         USER
-                          │
-                          ↓
-                    ┌─────────────┐
-                    │    React    │
-                    │  Frontend   │
-                    └──────┬──────┘
-                           │
-                        REST API
-                           │
-                           ↓
-                    ┌─────────────┐
-                    │ Spring Boot │
-                    │   Backend   │
-                    └───┬─────┬───┘
-                        │     │
-                 JPA/SQL│     │ S3 API
-                        │     │
-                        ↓     ↓
-                 ┌──────────┐ ┌───────────────────┐
-                 │PostgreSQL│ │  Object Storage   │
-                 │ Database │ │ MinIO / Amazon S3 │
-                 └────┬─────┘ └─────────┬─────────┘
-                      │                 │
-                      │                 │
-                      └────────┬────────┘
-                               │
-                               ↓
-                     ┌──────────────────┐
-                     │ Python ML Worker │
-                     └────────┬─────────┘
-                              │
-                              ↓
-                     ┌──────────────────┐
-                     │     ML Model     │
-                     │ Receipt Analysis │
-                     └──────────────────┘
+┌───────────────────────────┐
+│           User            │
+└──────────────┬────────────┘
+               │
+               ▼
+┌───────────────────────────┐
+│       React Frontend      │
+│        (Web Client)       │
+└──────────┬─────────┬──────┘
+           │         │
+           │         │ upload / download files
+           │         ▼
+           │   ┌───────────────────────────┐
+           │   │           MinIO           │
+           │   │      Object Storage       │
+           │   └─────────────▲─────────────┘
+           │                 │
+ HTTP /    │                 │ read / write files
+ REST API  │                 │
+           ▼                 │
+┌───────────────────────────┐│
+│    Spring Boot Backend    ││
+│        (REST API)         ││
+└─────────────┬─────────────┘│
+              │              │
+              │ JPA / SQL    │
+              │ create job   │
+              ▼              │
+┌───────────────────────────┐│
+│        PostgreSQL         ││
+│         Database          ││
+└─────────────▲─────────────┘│
+              │              │
+              │ poll PENDING │
+              │ jobs         │
+              │              │
+              │ update       │
+              │ status/result│
+              │              │
+              └───────▼      │
+                  ┌───────────────────────────┐
+                  │     Python ML Worker      ├┘
+                  │                           │
+                  │   ┌───────────────────┐   │
+                  │   │     ML Model      │   │
+                  │   │   ML Inference    │   │
+                  │   └───────────────────┘   │
+                  └───────────────────────────┘
 ```
 
 Главное архитектурное решение:
 
 > **Spring Boot и Python ML Worker не общаются напрямую.**
 
-Их взаимодействие происходит через:
+Spring Boot создаёт задачу в PostgreSQL, а Python ML Worker асинхронно забирает её оттуда и записывает результат обратно.
 
-- PostgreSQL;
-- Object Storage.
+Object Storage используется отдельно для файлов чеков: React загружает файлы, а Python ML Worker читает их для обработки.
 
 ---
 
@@ -90,6 +100,8 @@ Frontend — часть приложения, которую видит поль
 
 Frontend не должен содержать основную бизнес-логику.
 
+Для чеков frontend также напрямую работает с Object Storage: загружает изображение и при необходимости получает его обратно. Структурированные данные и бизнес-операции по-прежнему идут через Spring Boot.
+
 ---
 
 ## 4. Spring Boot Backend
@@ -110,7 +122,6 @@ Spring Boot
 ├── Goal Contributions
 ├── Analytics
 ├── Receipt Management
-├── File Upload
 ├── Database Access
 └── Security
 ```
@@ -122,7 +133,7 @@ Backend:
 - проверяет права пользователя;
 - выполняет бизнес-логику;
 - работает с PostgreSQL;
-- загружает изображения чеков в Object Storage;
+- сохраняет в PostgreSQL запись о чеке и создаёт задачу на ML-обработку;
 - получает уже обработанные результаты чеков из PostgreSQL;
 - после подтверждения пользователя создаёт Transaction.
 
@@ -164,6 +175,8 @@ receipts
 ## 6. Object Storage
 
 Изображения чеков хранятся отдельно в S3-compatible Object Storage.
+
+Согласно основной схеме, React Frontend загружает и получает файлы напрямую из Object Storage, а Python ML Worker читает файлы оттуда для обработки. Spring Boot не передаёт сами бинарные файлы чеков через себя.
 
 Варианты:
 
@@ -208,7 +221,7 @@ Python работает как отдельный асинхронный worker.
 Python Worker:
 
 1. периодически проверяет PostgreSQL;
-2. ищет чек со статусом `UPLOADED`;
+2. ищет чек со статусом `PENDING`;
 3. меняет статус на `PROCESSING`;
 4. получает `storage_key`;
 5. скачивает изображение из Object Storage;
@@ -226,7 +239,7 @@ Python не создаёт Transaction и не выполняет основну
 ## 8. Статусы чека
 
 ```text
-UPLOADED
+PENDING
     │
     ↓
 PROCESSING
@@ -243,8 +256,8 @@ CONFIRMED
 Значение статусов:
 
 ```text
-UPLOADED
-→ файл загружен и ожидает обработки
+PENDING
+→ задача создана и ожидает обработки
 
 PROCESSING
 → Python Worker обрабатывает чек
@@ -306,46 +319,50 @@ React
 User
  ↓
 React
- ↓
-POST /api/receipts
- ↓
-Spring Boot
- ├────────────→ Object Storage
- │               save image
+ ├────────────→ MinIO / Object Storage
+ │               upload image
+ │               receive storage_key
  │
- └────────────→ PostgreSQL
-                 save receipt
-                 status = UPLOADED
+ └────────────→ Spring Boot
+                 POST /api/receipts
+                 storage_key + metadata
+                         ↓
+                     PostgreSQL
+                     save receipt
+                     status = PENDING
 ```
 
-Spring Boot после этого больше не участвует в ML-обработке.
+После создания записи Spring Boot больше не участвует в ML-обработке. Python Worker самостоятельно забирает ожидающую задачу из PostgreSQL.
 
 ### Этап 2 — обработка
 
 ```text
-Python ML Worker
-       │
-       │ find UPLOADED receipt
-       ↓
-PostgreSQL
-       │
-       │ storage_key
-       ↓
-Python ML Worker
-       │
-       │ download image
-       ↓
-Object Storage
-       │
-       ↓
-ML Model
-       │
-       ↓
-Recognition Result
-       │
-       ↓
-PostgreSQL
+┌───────────────────────────┐
+│        PostgreSQL         │
+└─────────────▲─────────────┘
+              │
+              │ poll PENDING receipt
+              │ get storage_key
+              │ update status/result
+              │
+              ▼
+     ┌───────────────────────────┐
+     │     Python ML Worker      │
+     │                           │
+     │   ┌───────────────────┐   │
+     │   │     ML Model      │   │
+     │   │   ML Inference    │   │
+     │   └───────────────────┘   │
+     └─────────────┬─────────────┘
+                   │
+                   │ read image
+                   ▼
+          ┌───────────────────┐
+          │  Object Storage   │
+          └───────────────────┘
 ```
+
+ML Model является частью Python ML Worker, а не отдельным сетевым сервисом.
 
 ### Этап 3 — подтверждение
 
@@ -437,7 +454,6 @@ BudgetService
 GoalService
 ReceiptService
 AnalyticsService
-StorageService
 ```
 
 ### Repository
@@ -474,7 +490,6 @@ backend/
         │       ├── config/
         │       ├── security/
         │       ├── exception/
-        │       └── storage/
         │
         └── resources/
             ├── application.yml
@@ -543,7 +558,7 @@ FastAPI не обязателен, так как Spring Boot напрямую Py
 
 ## 16. API между frontend и backend
 
-Frontend общается только со Spring Boot.
+Для бизнес-API и структурированных данных frontend общается со Spring Boot.
 
 Пример:
 
@@ -561,9 +576,10 @@ React не обращается напрямую к:
 
 ```text
 PostgreSQL
-Object Storage
 Python Worker
 ```
+
+React напрямую работает с Object Storage только для upload/download файлов. Все структурированные данные, статусы обработки и бизнес-операции проходят через Spring Boot.
 
 ---
 
@@ -651,18 +667,23 @@ Docker Compose
 Общая схема:
 
 ```text
-┌────────────────── Docker Network ──────────────────┐
-│                                                    │
-│ React ─────→ Spring Boot ─────→ PostgreSQL         │
-│                  │                  ↑               │
-│                  │                  │               │
-│                  ↓                  │               │
-│                MinIO ←────── Python Worker          │
-│                                  │                 │
-│                                  ↓                 │
-│                               ML Model             │
-│                                                    │
-└────────────────────────────────────────────────────┘
+┌──────────────────── Docker Network ────────────────────┐
+│                                                       │
+│ React ─────→ Spring Boot ─────→ PostgreSQL            │
+│   │                                  ↑                 │
+│   │                                  │ poll/update     │
+│   ↓                                  │                 │
+│ MinIO ←──────────────┐               │                 │
+│                      │               │                 │
+│               ┌──────┴──────────────────────┐          │
+│               │      Python ML Worker       │          │
+│               │  ┌──────────────────────┐   │          │
+│               │  │      ML Model        │   │          │
+│               │  │    ML Inference      │   │          │
+│               │  └──────────────────────┘   │          │
+│               └─────────────────────────────┘          │
+│                                                       │
+└───────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -697,14 +718,13 @@ Deployment
 TransactionServiceTest
 BudgetServiceTest
 ReceiptServiceTest
-StorageServiceTest
 ```
 
 ### Integration Tests
 
 ```text
 Spring Boot + PostgreSQL
-Spring Boot + MinIO
+React upload/download + MinIO
 Python Worker + PostgreSQL
 Python Worker + MinIO
 ```
@@ -742,7 +762,7 @@ Backend возвращает стандартные HTTP status codes:
 
 ```text
 Receipt remains:
-status = UPLOADED
+status = PENDING
 ```
 
 Когда worker снова запустится, он сможет продолжить обработку.
@@ -940,11 +960,13 @@ CI/CD
 Главное правило взаимодействия:
 
 ```text
-Spring Boot
-    ↓
-PostgreSQL + Object Storage
-    ↑
-Python Worker
+React ─────────────→ Spring Boot ─────────────→ PostgreSQL
+  │                                              ↑
+  │                                              │ poll/update
+  ▼                                              │
+Object Storage ←──────────────────────── Python Worker
+                                             │
+                                             └─ ML Model
 ```
 
-Spring Boot и Python не зависят друг от друга напрямую.
+Spring Boot и Python не зависят друг от друга напрямую. Их асинхронное взаимодействие идёт через PostgreSQL, а общий доступ к файлам чеков обеспечивается через Object Storage.
