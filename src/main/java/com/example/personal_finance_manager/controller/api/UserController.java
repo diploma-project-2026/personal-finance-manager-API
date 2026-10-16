@@ -1,6 +1,7 @@
 package com.example.personal_finance_manager.controller.api;
 
 import com.example.personal_finance_manager.entity.User;
+import com.example.personal_finance_manager.mapper.UserMapper;
 import com.example.personal_finance_manager.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,27 +13,38 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
   private final UserService userService;
+  private final UserMapper userMapper;
 
+  /**
+   * Retrieves a user's public profile.
+   *
+   * @param id the user ID
+   * @return the user's ID, email, and default currency code with HTTP 200
+   */
   @GetMapping("/{id}")
-  public ResponseEntity<User> getUser(@PathVariable Long id) {
+  public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
     User user = userService.getUser(id);
-    return ResponseEntity.ok(user);
+
+    UserResponse response = userMapper.toResponse(user);
+
+    return ResponseEntity.ok(response);
   }
 
+  /**
+   * Updates a user's email and default currency, ignoring null or blank fields.
+   *
+   * @param id the user ID
+   * @param request the requested email and currency code
+   * @return the updated public profile with HTTP 200
+   */
   @PutMapping("/{id}")
-  public ResponseEntity<User> updateUser(
-      @PathVariable Long id,
-      @RequestParam String email,
-      @RequestParam(required = false) String currencyCode) {
-    User updatedUser = userService.updateUser(id, email, currencyCode);
-    return ResponseEntity.ok(updatedUser);
-  }
+  public ResponseEntity<UserResponse> updateUser(
+      @PathVariable Long id, @RequestBody UpdateUserRequest request) {
+    User updatedUser = userService.updateUser(id, request.email(), request.currencyCode());
 
-  @PostMapping("/new")
-  public ResponseEntity<User> createUser(
-      @RequestParam String email, @RequestParam String password) {
-    User createUser = userService.createUser(email, password);
-    return ResponseEntity.ok(createUser);
+    UserResponse response = userMapper.toResponse(updatedUser);
+
+    return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/{id}")
@@ -40,4 +52,10 @@ public class UserController {
     userService.deleteUser(id);
     return ResponseEntity.noContent().build();
   }
+
+  // todo
+  public record UpdateUserRequest(String email, String currencyCode) {}
+
+  // todo
+  public record UserResponse(Long id, String email, String currencyCode) {}
 }

@@ -23,8 +23,16 @@ public class UserService {
   @Value("${app.currency.default.code}")
   private String DEFAULT_CURRENCY_CODE;
 
+  /**
+   * Persists a new user with the configured default currency.
+   *
+   * @param email the new user's email address
+   * @param passwordHash the already hashed password to store
+   * @throws UserAlreadyExistsException if the email is already registered
+   * @throws CurrencyNotFoundException if the configured default currency does not exist
+   */
   @Transactional
-  public User createUser(String email, String passwordHash) {
+  public void createUser(String email, String passwordHash) {
 
     if (userRepository.existsByEmail(email)) {
       throw new UserAlreadyExistsException();
@@ -42,7 +50,7 @@ public class UserService {
             .defaultCurrency(defaultCurrency)
             .build();
 
-    return userRepository.save(user);
+    userRepository.save(user);
   }
 
   @Transactional(readOnly = true)
