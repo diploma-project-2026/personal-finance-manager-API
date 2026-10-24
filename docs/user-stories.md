@@ -14,9 +14,9 @@ As a registered user, I want to log in to my account so that I can securely acce
 
 ---
 
-### US-03 — Add Transaction
+### US-03 — Record an Expense
 **User Story:**  
-As a user, I want to add income and expense transactions so that I can keep track of my financial activity.
+As a user, I want to be able to record an expense either manually or by photographing a receipt so that I can keep my spending records up to date in the most convenient way.
 
 ---
 
@@ -26,15 +26,15 @@ As a user, I want to edit and delete my transactions so that I can keep my finan
 
 ---
 
-### US-05 — Transaction Categories
+### US-05 — Preferred Currency
 **User Story:**  
-As a user, I want to assign categories to my transactions so that I can understand how my income and expenses are distributed.
+As a user, I want to choose my preferred currency so that financial amounts are presented in the currency I normally use.
 
 ---
 
 ### US-06 — Custom Categories
 **User Story:**  
-As a user, I want to create my own income and expense categories so that I can organize transactions according to my personal needs.
+As a user, I want the option to add my own categories when predefined categories are not enough so that I can organize my finances according to my personal needs.
 
 ---
 
