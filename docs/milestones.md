@@ -14,7 +14,8 @@
 - Сформирован первоначальный список user stories
 - Определён базовый tech stack
 
-**Closed user stories:** Пока не закрываются
+**Closed user stories:**  
+Пока не закрываются
 
 ---
 
@@ -31,12 +32,13 @@
 - Scope проекта зафиксирован
 - Основные требования подтверждены
 
-**Closed user stories:** Пока не закрываются
+**Closed user stories:**  
+Пока не закрываются
 
 ---
 
 ## Milestone 3 — Progress Review 1
-**Period:** Week 4–6 (28 Sep – 18 Oct 2026)
+**Period:** Week 4–7 (28 Sep – 25 Oct 2026)
 
 **Official milestone:** Progress Review 1
 
@@ -49,19 +51,30 @@
   - `merchant`
   - `date`
   - `total`
-- Настроена загрузка receipt в MinIO
-- Spring создаёт receipt и pre-signed URL
-- Python Worker обрабатывает загруженный receipt
+  - `currency`
+  - `line items`
+- Для распознанных товаров могут быть извлечены:
+  - `name`
+  - `quantity`
+  - `unit_price`
+  - `total_amount`
+- Настроена загрузка receipt в Cloudinary
+- Spring создаёт receipt и signed upload parameters
+- Python Worker автоматически обрабатывает загруженный receipt
 - Статусы проходят через:
   - `PENDING_UPLOAD → UPLOADED → PROCESSING → DONE/FAILED`
-- Результат сохраняется в PostgreSQL
+- Распознанные данные receipt сохраняются в PostgreSQL
+- Распознанные товары сохраняются в таблицу `line_items`
+- Проверен end-to-end flow:
+  - `Spring → Cloudinary → PostgreSQL → Python Worker → ML pipeline → PostgreSQL`
 
-**Closed user stories:** `US-07`, `US-24`, `US-25`
+**Closed / partially completed user stories:**  
+`US-07`, `US-24`, `US-25`
 
 ---
 
 ## Milestone 4 — Expert Submissions Begin
-**Period:** Week 7–9 (19 Oct – 8 Nov 2026)
+**Period:** Week 8–10 (26 Oct – 15 Nov 2026)
 
 **Official milestone:** Expert submissions begin
 
@@ -70,21 +83,25 @@
 
 **Acceptance criteria:**
 - Работают registration/login
+- Пользователь может вручную записывать расходы
 - Работает создание, редактирование и удаление транзакций
-- Работает назначение категорий
-- Поддерживаются custom/default categories
+- Поддерживается preferred currency
+- Поддерживаются default и custom categories
+- Работает редактирование и удаление custom categories
 - Реализована история транзакций
 - Работает фильтрация по дате и категории
 - Есть поле `description`
 - Реализованы recent transactions
+- Receipt processing result можно получить через Spring Boot API
+- Receipt processing status можно получить через Spring Boot API
 
 **Closed user stories:**  
-`US-01`, `US-02`, `US-03`, `US-04`, `US-05`, `US-06`, `US-11`, `US-12`, `US-13`, `US-14`, `US-15`, `US-16`, `US-23`
+`US-01`, `US-02`, `US-03`, `US-04`, `US-05`, `US-06`, `US-11`, `US-12`, `US-13`, `US-14`, `US-15`, `US-16`, `US-23`, `US-24`, `US-25`
 
 ---
 
 ## Milestone 5 — Progress Review 2
-**Period:** Week 10–12 (9–29 Nov 2026)
+**Period:** Week 11–13 (16 Nov – 6 Dec 2026)
 
 **Official milestone:** Progress Review 2 — includes complexity check
 
@@ -97,7 +114,10 @@
 - Отображаются income/expense totals
 - Реализован spending by category
 - Есть общий financial overview
+- Пользователь может видеть spending trends по дням, неделям и месяцам
+- Receipt recognition result можно просмотреть и проверить перед созданием или обновлением transaction
 - Основные пользовательские сценарии доступны через UI и работают end-to-end
+- Frontend, Spring Boot, PostgreSQL, Cloudinary и Python Worker интегрированы между собой
 - К этому моменту реализована большая часть системы
 
 **Closed user stories:**  
