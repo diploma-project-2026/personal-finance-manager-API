@@ -1,35 +1,35 @@
-
 # Logical Database Schema
 
 ## Overview
 
 The Personal Finance Manager API uses PostgreSQL as its relational database management system.
 
-The database schema is managed using Liquibase migrations.
+The database structure is maintained using Liquibase migrations.
 
-The current database model consists of 9 tables:
+The current database model defines 10 tables:
 
-- currencies
-- users
-- categories
-- transactions
-- transaction_conversions
-- budgets
-- financial_goals
-- goal_contributions
-- receipts
+1. currencies
+2. users
+3. categories
+4. transactions
+5. transaction_conversions
+6. budgets
+7. financial_goals
+8. goal_contributions
+9. receipts
+10. line_items
 
-## Database Diagram
+## Current Database Diagram
 
-The database diagram is available here:
+The database diagram includes the receipt line items functionality introduced in migration V1.2.
 
-![Database Schema](DB_Scheme.png)
+![Current Database Schema](DB_Scheme.png)
 
-An additional diagram showing the planned receipt line items functionality is available here:
+An earlier database diagram, created before the introduction of receipt line items, is also available:
 
-[Planned Database Model](db%20model%20with%20line%20items.jpg)
+[Earlier Database Diagram](DB_Scheme1.jpg)
 
-Note: Receipt line items are planned functionality and are not included in the current Liquibase schema.
+The Liquibase migration files are the authoritative source of the implemented database structure.
 
 ## Table Relationships
 
@@ -46,44 +46,128 @@ Note: Receipt line items are planned functionality and are not included in the c
 | users | budgets | One-to-Many |
 | users | financial_goals | One-to-Many |
 | users | receipts | One-to-Many |
-| categories | transactions | One-to-Many |
 | categories | budgets | One-to-Many |
+| categories | line_items | One-to-Many |
 | transactions | transaction_conversions | One-to-One |
 | transactions | receipts | One-to-One |
 | financial_goals | goal_contributions | One-to-Many |
+| receipts | line_items | One-to-Many |
+
+The V1.0 schema originally includes a relationship between categories and transactions. Migration V1.3 modifies transaction categorization; its final effect must be checked against the migration script.
+
+## Receipt Line Items
+
+The `line_items` table is introduced by the Liquibase migration:
+
+`src/main/resources/database/changelog/V1.2/add-line-items.yaml`
+
+It stores individual products or services extracted from receipts.
+
+Each line item includes:
+
+- A unique identifier
+- A reference to its receipt
+- An optional category reference
+- Item name
+- Quantity
+- Unit price
+- Total amount
+- Creation timestamp
+- Update timestamp
+
+### Relationships
+
+**receipts → line_items**
+
+One-to-Many.
+
+A single receipt can have multiple line items.
+
+Each line item references exactly one receipt.
+
+The foreign key `receipt_id` references `receipts(id)`.
+
+Deleting a receipt automatically deletes its related line items through `ON DELETE CASCADE`.
+
+**categories → line_items**
+
+One-to-Many.
+
+A category can be associated with multiple line items.
+
+Each line item can optionally reference one category.
+
+The foreign key `category_id` references `categories(id)`.
+
+### Indexes
+
+The following indexes are defined for the line_items table:
+
+- idx_line_items_receipt_id
+- idx_line_items_category_id
+
+These indexes support efficient filtering and joining of receipt items with their parent receipts and categories.
 
 ## Primary Keys
 
-Each table has a primary key ensuring that its records can be uniquely identified.
+Each table has a primary key that uniquely identifies its records.
 
-Most tables use a BIGINT identifier.
+Most tables use an auto-incrementing BIGINT identifier.
 
-The currencies table uses the currency code as its primary key.
+Exceptions:
 
-The transaction_conversions table uses transaction_id as both its primary key and foreign key.
+- The currencies table uses a three-character currency code as its primary key.
+- The transaction_conversions table uses transaction_id as both its primary key and foreign key.
+
+The line_items table uses an auto-incrementing BIGINT primary key.
 
 ## Referential Integrity
 
-Relationships between tables are enforced using foreign key constraints.
+The database uses foreign key constraints to enforce relationships between tables.
 
-This ensures that records reference valid parent records.
+Foreign keys help ensure that references point to existing parent records.
+
+For example:
+
+- Each transaction belongs to an existing user.
+- Each receipt belongs to an existing user.
+- Each line item belongs to an existing receipt.
+- Each goal contribution references an existing financial goal.
+- Each budget references an existing user and category.
 
 ## Database Schema Creation
 
-The schema is created automatically by Liquibase migrations when the Spring Boot application starts.
+The database schema is created automatically using Liquibase migrations.
 
-Master changelog:
+### Master Changelog
 
 `src/main/resources/database/changelog/db.changelog-master.yaml`
 
-Initial migration:
+The master changelog includes:
 
-`src/main/resources/database/changelog/V1.0/init-scheme.yaml`
+- V1.0 — Initial database schema
+- V1.1 — Receipt status modification
+- V1.2 — Receipt line items
+- V1.3 — Transaction category modification
 
-The database tables must not be created manually.
+### Database Initialization
+
+When the Spring Boot application starts, Liquibase reads the master changelog and applies pending changesets.
+
+This process manages:
+
+- Table creation
+- Primary keys
+- Foreign keys
+- Unique constraints
+- Indexes
+- Schema changes
+
+Database tables do not need to be created manually.
 
 ## Additional Documentation
 
 - [Database Architecture](architecture.md)
 - [Data Dictionary](DATA_DICTIONARY.md)
-- [Database Diagram](DB_Scheme1.jpg)
+- [Current Database Diagram](DB_Scheme.png)
+- [Earlier Database Diagram](DB_Scheme1.jpg)
