@@ -1,0 +1,191 @@
+{
+  "file_name": "lidl_receipt_004.jpg",
+  "lines": [
+    {
+      "text": "L&DL",
+      "bbox": [280, 75, 530, 153],
+      "label": "MERCHANT"
+    },
+    {
+      "text": "UAB \"LIDI LISTUVE\"L. K.I 11791015",
+      "bbox": [208, 144, 567, 190],
+      "label": "MERCHANT"
+    },
+    {
+      "text": "(M RINKTING 9.60) VINIUS",
+      "bbox": [258, 167, 514, 207],
+      "label": "OTHER"
+    },
+    {
+      "text": "KVITAS 172/47M MOKETOJO KODAS: LT17910113",
+      "bbox": [111, 183, 552, 230],
+      "label": "OTHER"
+    },
+    {
+      "text": "8572/74/MA MAKETOJO KODAS: LT11910103 #00382658",
+      "bbox": [180, 196, 670, 239],
+      "label": "OTHER"
+    },
+    {
+      "text": "5151385 SKALPING MILLARI BALES ADJ. COMORGAN",
+      "bbox": [111, 208, 671, 260],
+      "label": "ITEM"
+    },
+    {
+      "text": "5519352 NEALK, KADIER KAKTEI,BK, AND. @ 8.39 A",
+      "bbox": [109, 226, 671, 275],
+      "label": "ITEM"
+    },
+    {
+      "text": "DOEZ00 (UZSTATAS)RA",
+      "bbox": [107, 247, 300, 295],
+      "label": "OTHER"
+    },
+    {
+      "text": "0002000 UESTALS 0.10",
+      "bbox": [107, 265, 654, 312],
+      "label": "OTHER"
+    },
+    {
+      "text": "5502277 PUSTABLE OATSKE",
+      "bbox": [108, 285, 382, 330],
+      "label": "ITEM"
+    },
+    {
+      "text": "002/19/X 2.000 VATE VARIANORA",
+      "bbox": [125, 303, 670, 351],
+      "label": "ITEM"
+    },
+    {
+      "text": "0082411 SHILK S INV.PON 5009",
+      "bbox": [107, 323, 670, 371],
+      "label": "ITEM"
+    },
+    {
+      "text": "0082215 X AGGRKAL TRUMPAN S.",
+      "bbox": [106, 342, 419, 387],
+      "label": "ITEM"
+    },
+    {
+      "text": "2,49 X 0,392 KG THOPAVALS:",
+      "bbox": [127, 363, 670, 403],
+      "label": "ITEM"
+    },
+    {
+      "text": "NUCLAIDA A CKYY -0.40 A",
+      "bbox": [107, 398, 677, 436],
+      "label": "OTHER"
+    },
+    {
+      "text": "0082480, LIFT.POMIDORAI",
+      "bbox": [107, 420, 384, 460],
+      "label": "ITEM"
+    },
+    {
+      "text": "0.99 X 0.226 KG TOTAL",
+      "bbox": [129, 437, 678, 478],
+      "label": "ITEM"
+    },
+    {
+      "text": "TAISYMAS -",
+      "bbox": [158, 460, 270, 496],
+      "label": "OTHER"
+    },
+    {
+      "text": "0082411 SHULK.S.VY.PPM.5009",
+      "bbox": [104, 475, 681, 517],
+      "label": "ITEM"
+    },
+    {
+      "text": "0082411 SHULK.SLV.PON.5009",
+      "bbox": [104, 493, 665, 537],
+      "label": "ITEM"
+    },
+    {
+      "text": "TAISYMAS",
+      "bbox": [156, 517, 269, 553],
+      "label": "OTHER"
+    },
+    {
+      "text": "0082411 SHULK.SJYW.POM.5099",
+      "bbox": [104, 532, 682, 574],
+      "label": "ITEM"
+    },
+    {
+      "text": "TARPINE SUMA",
+      "bbox": [103, 572, 682, 612],
+      "label": "OTHER"
+    },
+    {
+      "text": "NUOLAIDA",
+      "bbox": [102, 609, 685, 650],
+      "label": "OTHER"
+    },
+    {
+      "text": "PVN BE PVM SU PVM",
+      "bbox": [314, 650, 683, 685],
+      "label": "OTHER"
+    },
+    {
+      "text": "A=21.00% 1.07 5.09",
+      "bbox": [96, 670, 686, 714],
+      "label": "OTHER"
+    },
+    {
+      "text": "MOLETI (INTRYLES) 6.26",
+      "bbox": [97, 710, 686, 753],
+      "label": "TOTAL"
+    },
+    {
+      "text": "MOKETA (BANKO KORTELES) (RM)",
+      "bbox": [97, 730, 688, 773],
+      "label": "OTHER"
+    },
+    {
+      "text": "MOKE JIMAS KORTELE",
+      "bbox": [280, 824, 484, 862],
+      "label": "OTHER"
+    },
+    {
+      "text": "PIRKIMAS",
+      "bbox": [331, 843, 445, 882],
+      "label": "OTHER"
+    },
+    {
+      "text": "KVITO NR. 1 549258",
+      "bbox": [178, 861, 596, 905],
+      "label": "OTHER"
+    },
+    {
+      "text": "TERMINALO NR. 0062681526",
+      "bbox": [180, 882, 596, 925],
+      "label": "OTHER"
+    },
+    {
+      "text": "NO REDM REGISTRINIO NO. 2021-06-15 12581020",
+      "bbox": [50, 902, 596, 949],
+      "label": "OTHER"
+    },
+    {
+      "text": "2021-06-15 12:58:21",
+      "bbox": [371, 920, 597, 963],
+      "label": "DATE"
+    },
+    {
+      "text": "W. KORTELE SWEEDAK MASTERCARD 1-06-15-12 58:27:31",
+      "bbox": [90, 928, 634, 988],
+      "label": "OTHER"
+    },
+    {
+      "text": "KORTEAD:SWEODBACK MASTERCARD TVR: 0000080009",
+      "bbox": [119, 952, 596, 1000],
+      "label": "OTHER"
+    },
+    {
+      "text": "AE AID: A0000000041010",
+      "bbox": [176, 970, 400, 1000],
+      "label": "OTHER"
+    }
+  ],
+  "source_image": "raw"
+}

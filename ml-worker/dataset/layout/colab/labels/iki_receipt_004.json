@@ -1,0 +1,385 @@
+{
+  "file_name": "iki_receipt_004.jpg",
+  "lines": [
+    {
+      "text": "IKI LLETUVA, UAB",
+      "bbox": [
+        400,
+        110,
+        692,
+        153
+      ],
+      "label": "MERCHANT"
+    },
+    {
+      "text": "TALKOS PR. 115. KIALPEDA",
+      "bbox": [
+        337,
+        131,
+        750,
+        172
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "PVM MOKETOJO KODAS LT101937219",
+      "bbox": [
+        285,
+        147,
+        794,
+        192
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "HEMATOGENS NOTRE 1.39 A",
+      "bbox": [
+        192,
+        196,
+        887,
+        242
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "NUDAIDA SU KORTELE 0.42A",
+      "bbox": [
+        192,
+        216,
+        887,
+        262
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "PIGINTUNO KUPONAS @.01A",
+      "bbox": [
+        187,
+        238,
+        888,
+        282
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "NUDIAIDA KUPONUI COMPERS -0.91A",
+      "bbox": [
+        185,
+        257,
+        887,
+        304
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "SRIKI-SVIEZIOS VISCIUKU 3.29 A",
+      "bbox": [
+        188,
+        279,
+        887,
+        323
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "NUOLAIDA SU KORTELE PK6 -0.90 A",
+      "bbox": [
+        177,
+        300,
+        885,
+        345
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "MAISELIS PLASTIKINIS LENG 0,01 A",
+      "bbox": [
+        175,
+        320,
+        885,
+        366
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "APELSINAI",
+      "bbox": [
+        170,
+        341,
+        372,
+        386
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "NO. 768 K9, X 1.99 EUR/KG 1.53 A",
+      "bbox": [
+        200,
+        363,
+        887,
+        408
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "INVOLAIDA SU KORTELE EVER9 -0.77 A",
+      "bbox": [
+        168,
+        382,
+        885,
+        430
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "GAIDELIS SAUSAINIAI 0.75 A",
+      "bbox": [
+        168,
+        404,
+        885,
+        453
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "NOSLAIDA SU KORTELL W/SW -0.15 A",
+      "bbox": [
+        168,
+        429,
+        885,
+        476
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "JOGURIAS FANTASIA SU VYSN 1.09 A",
+      "bbox": [
+        166,
+        448,
+        881,
+        495
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "NUOLAIDA SU KORTELE VISION -0.14 A",
+      "bbox": [
+        164,
+        470,
+        883,
+        517
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "NORTILIOS TEX MEX 3.19 A",
+      "bbox": [
+        161,
+        491,
+        879,
+        539
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "ZUROLAIDA SU KORTE 5 MINITE -0.64 A",
+      "bbox": [
+        157,
+        513,
+        879,
+        563
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "ZURNALAS PAGUNDA 5 MINUTE 0.65 E",
+      "bbox": [
+        153,
+        535,
+        877,
+        586
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "PREKIAUTOJO ID 15007001",
+      "bbox": [
+        144,
+        578,
+        575,
+        623
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "DATE 20004 1014 - DEBIT MASTERCANS 14:43:40",
+      "bbox": [
+        142,
+        601,
+        877,
+        657
+      ],
+      "label": "DATE"
+    },
+    {
+      "text": "AC00000041010 - DEBIT MASTERCARD",
+      "bbox": [
+        138,
+        622,
+        724,
+        673
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "EC/MC",
+      "bbox": [
+        140,
+        646,
+        274,
+        686
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "***xxxx***3264",
+      "bbox": [
+        200,
+        669,
+        444,
+        714
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "GRYNAJU ISMOKEJIMAS",
+      "bbox": [
+        309,
+        695,
+        672,
+        742
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "PARDAVIMAS",
+      "bbox": [
+        131,
+        712,
+        350,
+        758
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "SUMA",
+      "bbox": [
+        133,
+        736,
+        253,
+        775
+      ],
+      "label": "TOTAL"
+    },
+    {
+      "text": "GRABLEJI | 8.88 EUR",
+      "bbox": [
+        131,
+        750,
+        870,
+        800
+      ],
+      "label": "TOTAL"
+    },
+    {
+      "text": "SUMAS",
+      "bbox": [
+        127,
+        777,
+        261,
+        820
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "IS VISO 100 100.00 EUR",
+      "bbox": [
+        129,
+        796,
+        868,
+        848
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "SUMA",
+      "bbox": [
+        124,
+        823,
+        250,
+        867
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "7091 KATVIRINTAS 108.88 EUR",
+      "bbox": [
+        359,
+        840,
+        864,
+        903
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "AUT. KODAS 047901 KETAS 7458 ATSK 000",
+      "bbox": [
+        166,
+        869,
+        794,
+        931
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "TVR AUT. KODAS 041998 REF. NR.45",
+      "bbox": [
+        148,
+        895,
+        607,
+        946
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "TVR 00000080081898 8800 AIR 0903 KG37571",
+      "bbox": [
+        116,
+        906,
+        827,
+        976
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "MC E005F1C6C67F90A1 ROD. 00",
+      "bbox": [
+        288,
+        940,
+        825,
+        997
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "CAPPL. MULTIPOINT 06 20 075 00-",
+      "bbox": [
+        175,
+        968,
+        712,
+        1000
+      ],
+      "label": "OTHER"
+    }
+  ]
+}

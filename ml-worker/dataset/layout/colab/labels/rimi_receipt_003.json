@@ -1,0 +1,245 @@
+{
+  "file_name": "rimi_receipt_003.jpg",
+  "lines": [
+    {
+      "text": "(SIM)",
+      "bbox": [425, 15, 577, 61],
+      "label": "OTHER"
+    },
+    {
+      "text": "TAL,KO NORITU",
+      "bbox": [418, 46, 602, 86],
+      "label": "OTHER"
+    },
+    {
+      "text": "MASTER SHIPT, RIVAIL 78819",
+      "bbox": [389, 61, 644, 110],
+      "label": "OTHER"
+    },
+    {
+      "text": "PVM MOKETOJO KODAS LT287153113",
+      "bbox": [355, 86, 658, 121],
+      "label": "OTHER"
+    },
+    {
+      "text": "PIRKE JAS XXXXXXXXXXXX5403",
+      "bbox": [298, 107, 684, 145],
+      "label": "OTHER"
+    },
+
+    {
+      "text": "PLEASE:PERS REGINALES RIMT 0.10 A",
+      "bbox": [296, 134, 694, 185],
+      "label": "ITEM"
+    },
+    {
+      "text": "STRAKE:1,5076 AUGSIES 1,90 A",
+      "bbox": [295, 157, 694, 210],
+      "label": "ITEM"
+    },
+    {
+      "text": "EXCLUSIA SOLD ABOVE 1,33 A",
+      "bbox": [295, 184, 698, 236],
+      "label": "ITEM"
+    },
+    {
+      "text": "EXCLUDING 40 GALLET, KELAN 1,59 1.99 A",
+      "bbox": [296, 210, 698, 262],
+      "label": "ITEM"
+    },
+    {
+      "text": "EXCLUDED AIRRAI, LOVE 18,99 1,99 A",
+      "bbox": [295, 237, 698, 288],
+      "label": "ITEM"
+    },
+    {
+      "text": "ENVOL:8.40 GALUT, KALNE 1.59",
+      "bbox": [303, 264, 624, 301],
+      "label": "ITEM"
+    },
+    {
+      "text": "EXCLOS(SK) A9URKAL INVOVE",
+      "bbox": [294, 280, 563, 327],
+      "label": "ITEM"
+    },
+    {
+      "text": "E001 3008.40 GALUXA, KALRA 1.59 -1.99 A",
+      "bbox": [294, 303, 703, 344],
+      "label": "ITEM"
+    },
+    {
+      "text": "ENVOL:8.40 GALUT, KALNA 1.59",
+      "bbox": [302, 316, 624, 355],
+      "label": "ITEM"
+    },
+    {
+      "text": "EXCLOS RADD VEGNINTAI K",
+      "bbox": [294, 331, 525, 368],
+      "label": "ITEM"
+    },
+    {
+      "text": "DOMIORAL, 2309, KALDA 1 19 1,49 A",
+      "bbox": [295, 346, 701, 383],
+      "label": "ITEM"
+    },
+    {
+      "text": "PANSLA FO: 3068 GALUT KLAS INA 1.19",
+      "bbox": [299, 358, 624, 397],
+      "label": "ITEM"
+    },
+    {
+      "text": "KEEPELI,5%ST65-1589-189",
+      "bbox": [294, 372, 556, 426],
+      "label": "ITEM"
+    },
+    {
+      "text": "50.500 KG X 6.69 EUR/K9.4ME 3.35 A",
+      "bbox": [302, 398, 700, 437],
+      "label": "ITEM"
+    },
+    {
+      "text": "EXCEIP: 199-KCB,SALSAIN RUG 4/8 1,50 A",
+      "bbox": [292, 411, 698, 462],
+      "label": "ITEM"
+    },
+    {
+      "text": "RNZL: 0.30 GALUT, KALRA 1.20",
+      "bbox": [298, 439, 624, 477],
+      "label": "ITEM"
+    },
+    {
+      "text": "BY2 LY.8Y12.KOSEPER",
+      "bbox": [292, 453, 473, 491],
+      "label": "ITEM"
+    },
+    {
+      "text": "SALES 6% SEPER:12098 1.03 1.29 A",
+      "bbox": [291, 465, 703, 517],
+      "label": "ITEM"
+    },
+    {
+      "text": "BRASKIA SK.KRAMTOMIT",
+      "bbox": [292, 495, 505, 531],
+      "label": "ITEM"
+    },
+    {
+      "text": "SALDAIN CHEWITS, 29G @ 0.31 A",
+      "bbox": [291, 508, 704, 545],
+      "label": "ITEM"
+    },
+    {
+      "text": "RYZIU.AY12.KOSEPER",
+      "bbox": [292, 522, 473, 560],
+      "label": "ITEM"
+    },
+    {
+      "text": "NO.99, 5026,SEALUT, KALRA 1,03 1,29 A",
+      "bbox": [291, 538, 704, 587],
+      "label": "ITEM"
+    },
+
+    {
+      "text": "SUTEIKTOS NUOLAIDOS:",
+      "bbox": [292, 582, 514, 614],
+      "label": "OTHER"
+    },
+    {
+      "text": "KITOS EXCLUDIES ATEL, :0.79",
+      "bbox": [289, 594, 686, 633],
+      "label": "OTHER"
+    },
+    {
+      "text": "20% KODIKIY MALSTER. =0.82",
+      "bbox": [288, 609, 686, 647],
+      "label": "OTHER"
+    },
+    {
+      "text": "JIS SUTAUPATE 1,52",
+      "bbox": [285, 639, 707, 690],
+      "label": "OTHER"
+    },
+    {
+      "text": "UNDIROTI MANO RIMT PINIGAI 0.12",
+      "bbox": [284, 680, 708, 719],
+      "label": "OTHER"
+    },
+    {
+      "text": "MANO RIMI PINIQUE ROTIS STMT 8:19",
+      "bbox": [282, 694, 708, 735],
+      "label": "OTHER"
+    },
+    {
+      "text": "SUBLATORA SU KARTELE MANO RIMI 0.82",
+      "bbox": [282, 711, 708, 751],
+      "label": "OTHER"
+    },
+    {
+      "text": "SUBARTELE MANO RIMI SI MENESI",
+      "bbox": [281, 727, 610, 764],
+      "label": "OTHER"
+    },
+    {
+      "text": "SUTAURATE RAWL ST MENESI 3.41",
+      "bbox": [281, 743, 710, 782],
+      "label": "OTHER"
+    },
+
+    {
+      "text": "MAKETLIS SUPW BE PN 12/43",
+      "bbox": [281, 775, 712, 814],
+      "label": "OTHER"
+    },
+    {
+      "text": "MOKESTIS SUPW BE PVM PVM SUME",
+      "bbox": [278, 789, 712, 829],
+      "label": "OTHER"
+    },
+    {
+      "text": "8 21.00S 12:43 10:27 PM 2:16",
+      "bbox": [277, 804, 712, 844],
+      "label": "OTHER"
+    },
+
+    {
+      "text": "GRAYALSLALS 12,43 10/2/ 20:00",
+      "bbox": [278, 821, 714, 861],
+      "label": "TOTAL"
+    },
+
+    {
+      "text": "GRAZE NO. 56/631604 KASA 0005 29:59",
+      "bbox": [275, 835, 712, 876],
+      "label": "OTHER"
+    },
+    {
+      "text": "KVITO NR. 56/631604 KASA 0005",
+      "bbox": [274, 851, 603, 888],
+      "label": "OTHER"
+    },
+    {
+      "text": "#00526711",
+      "bbox": [584, 870, 711, 906],
+      "label": "OTHER"
+    },
+    {
+      "text": "ACIO, KAD PAS MUS PERKATE",
+      "bbox": [371, 897, 662, 937],
+      "label": "OTHER"
+    },
+    {
+      "text": "NEWOKAMAS KLIENTY TEL 8-800-29000",
+      "bbox": [326, 915, 705, 954],
+      "label": "OTHER"
+    },
+    {
+      "text": "WWW.PLMLIES 201870.IT@RMISALTIC.COM",
+      "bbox": [303, 930, 728, 971],
+      "label": "OTHER"
+    },
+    {
+      "text": "HB E2148038 2018-02-26 12:26:04",
+      "bbox": [313, 947, 675, 984],
+      "label": "DATE"
+    }
+  ]
+}

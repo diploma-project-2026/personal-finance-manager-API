@@ -1,0 +1,475 @@
+{
+  "file_name": "maxima_receipt_001.jpg",
+  "lines": [
+    {
+      "text": "INVAL",
+      "bbox": [
+        48,
+        23,
+        630,
+        89
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "MAXIMA LT, UAB",
+      "bbox": [
+        394,
+        96,
+        671,
+        132
+      ],
+      "label": "MERCHANT"
+    },
+    {
+      "text": "ANTAKALNIO 9. 67, UKNERGE, CHECKOUT NO. 8",
+      "bbox": [
+        210,
+        110,
+        918,
+        149
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "VAT PAYER CODE LT230335113",
+      "bbox": [
+        326,
+        130,
+        796,
+        166
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "#00009574",
+      "bbox": [
+        795,
+        142,
+        1000,
+        179
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "RECEIPT IN DATABASE:",
+      "bbox": [
+        39,
+        163,
+        1000,
+        201
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "BIG SHOPPING BAG GINIES PORK LOIN 9.39 A",
+      "bbox": [
+        39,
+        178,
+        1000,
+        218
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "CHILIED BONELESS SKINLESS PORK LOIN 3.37 A",
+      "bbox": [
+        45,
+        194,
+        1000,
+        232
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "3.29 X 1.024 KG",
+      "bbox": [
+        76,
+        216,
+        378,
+        252
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "PRICE MARKPANYS CATALESS PARK LOIN -1.64A",
+      "bbox": [
+        39,
+        229,
+        1000,
+        269
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "CHILIED BORELESS SKINLESS PORK LOIN 2.49 A",
+      "bbox": [
+        41,
+        247,
+        1000,
+        285
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "3.29 X 0.756 KG",
+      "bbox": [
+        74,
+        267,
+        375,
+        303
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "PRICE MARKDOWN GARDLOR PACK US ON -1.21 A",
+      "bbox": [
+        45,
+        280,
+        996,
+        319
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "CHILIED BONELESS SKINLESS PORK LOIN 4.02 A",
+      "bbox": [
+        46,
+        299,
+        996,
+        335
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "3.29 X 1.222 KG",
+      "bbox": [
+        76,
+        319,
+        378,
+        354
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "PRICE MARKPONG AT + 1 -1.95A",
+      "bbox": [
+        48,
+        332,
+        996,
+        370
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "EARM MILK 3.2% FAT 1 0.98 A",
+      "bbox": [
+        46,
+        349,
+        996,
+        387
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "EXTRA LINE WHITE BEANS @.77A",
+      "bbox": [
+        46,
+        367,
+        996,
+        404
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "EXTRA LINE SPITH PERS @ 5% A",
+      "bbox": [
+        46,
+        385,
+        996,
+        422
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "WELL DONE CANNED COM. WELL ONE CANNED COM 1.09 A",
+      "bbox": [
+        48,
+        401,
+        996,
+        438
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "ACIO DISCOUNT ON ITEM: WELL DONE CANNED CORN",
+      "bbox": [
+        48,
+        421,
+        829,
+        453
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "-0.20 A",
+      "bbox": [
+        828,
+        436,
+        994,
+        468
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "WASHED CARROTS",
+      "bbox": [
+        52,
+        453,
+        994,
+        486
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "0.79 X 0.482 KG",
+      "bbox": [
+        83,
+        471,
+        376,
+        504
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "ORIONS VALUE ONCLUSIVE ON ONLY ON ALL ONVO A",
+      "bbox": [
+        52,
+        488,
+        994,
+        520
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "0.45 X 0.148 KG",
+      "bbox": [
+        83,
+        503,
+        380,
+        539
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "WELL DONE BARN-LAID CHICKEN EGGS, 10 PCS",
+      "bbox": [
+        52,
+        519,
+        770,
+        555
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "10 PCS IN ITEM: WELL ONE, RETAILABLE 2.49 A",
+      "bbox": [
+        52,
+        537,
+        996,
+        573
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "ACID DISCOUNT ON ITEM: WELL DONE BARN-LATD CHICKEN EGGS",
+      "bbox": [
+        48,
+        552,
+        996,
+        592
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "-0.50 A",
+      "bbox": [
+        826,
+        571,
+        996,
+        607
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "KARALISKI WHEAT FLOUR, PREM, GRABE, 405 D 7-89 A",
+      "bbox": [
+        52,
+        585,
+        1000,
+        625
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "LINKETMAT IS KAIMO WASHED POTATOES, 50-70 MM 2.94 A",
+      "bbox": [
+        52,
+        603,
+        1000,
+        640
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "11.15 X 2.556 KG",
+      "bbox": [
+        79,
+        621,
+        380,
+        658
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "ACIO DISCOUNT ON ITEM: LINKSJIMAI IS KAIMO WASHED POTATOE",
+      "bbox": [
+        46,
+        638,
+        1000,
+        678
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "-0.92 A",
+      "bbox": [
+        824,
+        656,
+        1000,
+        692
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "SINGLE-USE PLASTIC BAG",
+      "bbox": [
+        52,
+        674,
+        996,
+        707
+      ],
+      "label": "ITEM"
+    },
+    {
+      "text": "BENEFITS PROVIDED",
+      "bbox": [
+        48,
+        709,
+        380,
+        740
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "BENEFITS PROVIDED | ACIO DISCOUNTS -1.62",
+      "bbox": [
+        46,
+        724,
+        994,
+        760
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "APPLIED DISCOUNTS ADJ DISCOUNS -4.80 #",
+      "bbox": [
+        46,
+        740,
+        994,
+        777
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "AMOUNT SAVED:",
+      "bbox": [
+        45,
+        775,
+        993,
+        809
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "RATE EXCL. VAT VAT INCL. VAT",
+      "bbox": [
+        41,
+        808,
+        991,
+        844
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "AE 21.00% (A) 12.36 2.59 14.95",
+      "bbox": [
+        39,
+        842,
+        991,
+        881
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "RECEIPT TOTAL: 1 1/4.95",
+      "bbox": [
+        39,
+        874,
+        987,
+        914
+      ],
+      "label": "TOTAL"
+    },
+    {
+      "text": "AMOUNT PAYABLE *14.95",
+      "bbox": [
+        39,
+        906,
+        987,
+        950
+      ],
+      "label": "TOTAL"
+    },
+    {
+      "text": "AMOUNT PAYABLE PAYABLE: 14.95 * 14.95",
+      "bbox": [
+        39,
+        923,
+        991,
+        967
+      ],
+      "label": "TOTAL"
+    },
+    {
+      "text": "PAID BY NON-CASH (CARD): 14.95",
+      "bbox": [
+        39,
+        946,
+        706,
+        982
+      ],
+      "label": "OTHER"
+    },
+    {
+      "text": "ACIO CARD DETAILS: ****7586",
+      "bbox": [
+        41,
+        976,
+        612,
+        1000
+      ],
+      "label": "OTHER"
+    }
+  ]
+}
