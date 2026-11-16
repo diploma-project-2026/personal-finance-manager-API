@@ -1,0 +1,18 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: remove-category-from-transactions
+      author: student
+      changes:
+
+        - dropForeignKeyConstraint:
+            baseTableName: transactions
+            constraintName: fk_transactions_category
+
+        - dropIndex:
+            tableName: transactions
+            indexName: idx_transactions_category_id
+
+        - dropColumn:
+            tableName: transactions
+            columnName: category_id

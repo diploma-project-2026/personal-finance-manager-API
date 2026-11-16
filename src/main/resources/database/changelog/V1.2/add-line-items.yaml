@@ -1,0 +1,87 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: create-line-items
+      author: student
+      changes:
+
+        - createTable:
+            tableName: line_items
+            columns:
+
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: receipt_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: category_id
+                  type: BIGINT
+
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: quantity
+                  type: DECIMAL(10,2)
+
+              - column:
+                  name: unit_price
+                  type: DECIMAL(19,2)
+
+              - column:
+                  name: total_amount
+                  type: DECIMAL(19,2)
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: line_items
+            baseColumnNames: receipt_id
+            referencedTableName: receipts
+            referencedColumnNames: id
+            constraintName: fk_line_items_receipt
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: line_items
+            baseColumnNames: category_id
+            referencedTableName: categories
+            referencedColumnNames: id
+            constraintName: fk_line_items_category
+
+        - createIndex:
+            tableName: line_items
+            indexName: idx_line_items_receipt_id
+            columns:
+              - column:
+                  name: receipt_id
+
+        - createIndex:
+            tableName: line_items
+            indexName: idx_line_items_category_id
+            columns:
+              - column:
+                  name: category_id

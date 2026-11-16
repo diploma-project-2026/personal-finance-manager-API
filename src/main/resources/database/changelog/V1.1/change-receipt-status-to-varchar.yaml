@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-receipt-status-to-varchar
+      author: student
+      changes:
+        - sql:
+            sql: |
+              ALTER TABLE receipts
+              ALTER COLUMN status TYPE VARCHAR(50)
+              USING status::text;

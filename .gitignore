@@ -31,3 +31,16 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Python / ML worker ###
+.venv/
+__pycache__/
+*.pyc
+
+# Local trained Donut model weights
+ml-worker/app/models/trained_donut_v2/
+
+# Local database credentials
+.env
+.env.*
+!.env.example
