@@ -4,7 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+# STS
 .apt_generated
 .classpath
 .factorypath
@@ -13,34 +13,91 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+# IntelliJ IDEA
+.idea/
 *.iws
 *.iml
 *.ipr
+out/
 
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
-/dist/
 /nbdist/
 /.nb-gradle/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+# VS Code
 .vscode/
 
-### Python / ML worker ###
+# Frontend
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+npm-debug.log*
+
+# Tests and coverage
+coverage/
+test-results/
+playwright-report/
+playwright/.cache/
+playwright/.auth/
+*.exec
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Python
 .venv/
+venv/
 __pycache__/
 *.pyc
+*.pyo
+.ipynb_checkpoints/
 
-# Local trained Donut model weights
+# ML model weights
 ml-worker/app/models/trained_donut_v2/
+ml-worker/models/
+*.safetensors
+*.ckpt
+*.pt
+*.pth
 
-# Local database credentials
+# Generated datasets
+ml-worker/dataset/doctr_detected/
+ml-worker/dataset/grouped_lines/
+ml-worker/dataset/processed/
+ml-worker/dataset/layout/temp/
+ml-worker/dataset/layout/unlabeled/
+ml-worker/dataset/layout/*temp_processed.jpg
+
+# Local configuration and credentials
 .env
 .env.*
 !.env.example
+application-local.properties
+application-local.yml
+application-local.yaml
+*.pem
+*.key
+*.jks
+
+# Docker
+docker-compose.override.yml
+docker-compose.override.yaml
+postgres-data/
+pgdata/
+
+# Logs and temporary files
+logs/
+*.log
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.lnk
