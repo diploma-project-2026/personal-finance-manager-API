@@ -1,0 +1,57 @@
+﻿name: Automated Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Run backend tests
+        run: bash ./mvnw clean test
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: target/site/jacoco/
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results
+          path: target/surefire-reports/
+
+  frontend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: frontend-submission
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install and run UI tests
+        shell: bash
+        run: |
+          PACKAGE=$(find . -name package.json -not -path '*/node_modules/*' -exec grep -l '"vitest"' {} \; | head -n 1)
+          test -n "$PACKAGE"
+          cd "$(dirname "$PACKAGE")"
+          npm ci
+          npx vitest run
+          npx playwright install --with-deps chromium
+          npx playwright test

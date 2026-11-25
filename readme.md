@@ -1,4 +1,4 @@
-# Personal Finance Manager API
+﻿# Personal Finance Manager API
 
 ## Project Description
 
@@ -16,8 +16,8 @@ The backend is built with Java and Spring Boot. PostgreSQL is used for relationa
 - Spring Data JPA / Hibernate
 - Liquibase
 - Maven
-- Cloudinary — image storage
-- Python — receipt processing and ML worker
+- Cloudinary â€” image storage
+- Python â€” receipt processing and ML worker
 
 ## Database
 
@@ -65,7 +65,7 @@ Do not manually create tables. Liquibase manages the database structure.
 
 Database connection settings are configured through environment variables.
 
-Set the following variables in IntelliJ IDEA under **Run → Edit Configurations → Environment variables**:
+Set the following variables in IntelliJ IDEA under **Run â†’ Edit Configurations â†’ Environment variables**:
 
 ```text
 DB_URL=jdbc:postgresql://localhost:5432/personal_finance_manager
@@ -199,7 +199,7 @@ The materials include:
 
 The database structure is maintained using version-controlled Liquibase migration scripts.
 
-## API Documentation — Stage 3
+## API Documentation â€” Stage 3
 
 - [API documentation index](docs/api/README.md)
 - [OpenAPI specification](docs/api/openapi.yaml)
@@ -207,4 +207,22 @@ The database structure is maintained using version-controlled Liquibase migratio
 - [Integration tutorial](docs/api/guides/INTEGRATION.md)
 
 The current backend is a local development API without HTTP authentication. Do not expose it publicly. Use the documentation setup guide for disposable development data. The separate [front-end review](frontend/pfm-frontend/README.md) uses a mock API and is not connected to the Java API.
-notepad docs/api/README.md
+
+## Automated testing
+
+Run backend tests and generate the JaCoCo coverage report:
+
+    ./mvnw clean test
+
+Windows:
+
+    .\mvnw.cmd clean test
+
+Coverage report: target/site/jacoco/index.html
+
+Testing strategy: [Automated Testing](docs/testing/README.md)
+
+Coverage baseline: [Coverage CSV](docs/testing/coverage.csv)
+
+Frontend tests are available in the frontend-submission branch.
+
