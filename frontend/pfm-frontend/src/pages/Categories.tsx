@@ -47,7 +47,7 @@ export default function Categories() {
                 ).unwrap();
                 setName("");
               } catch {
-                /* global error */
+                /* Handled by the global error handler. */
               }
             }}
           >

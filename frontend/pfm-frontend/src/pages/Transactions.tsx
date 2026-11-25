@@ -54,7 +54,7 @@ export default function Transactions() {
                 ).unwrap();
                 setEditing(null);
               } catch {
-                /* global error */
+                /* Handled by the global error handler. */
               }
             }}
           />

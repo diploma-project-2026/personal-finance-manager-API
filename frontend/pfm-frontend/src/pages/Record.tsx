@@ -43,7 +43,7 @@ export default function Record() {
                 ).unwrap();
                 navigate("/transactions");
               } catch {
-                /* global error */
+                /* Handled by the global error handler. */
               }
             }}
           />

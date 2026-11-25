@@ -76,7 +76,7 @@ export default function Goals() {
                 setTarget("");
                 setSaved("0");
               } catch {
-                /* global error */
+                /* Handled by the global error handler. */
               }
             }}
           >

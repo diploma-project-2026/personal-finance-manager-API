@@ -108,7 +108,7 @@ export default function Budgets() {
                 setCategory("");
                 setLimit("");
               } catch {
-                /* global error */
+                /* Handled by the global error handler. */
               }
             }}
           >

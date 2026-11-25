@@ -10,7 +10,7 @@ test("record expense and find it in transaction history", async ({ page }) => {
   await page.getByRole("link", { name: "Record Expense", exact: true }).click();
   await page.getByLabel("Merchant / description").fill("Test groceries");
   await page.getByLabel("Amount (EUR)").fill("15.25");
-  await page.getByLabel("Category", { exact: true }).selectOption("food");
+  await page.getByLabel(/^Category/).selectOption("food");
   await page.getByRole("button", { name: "Save transaction" }).click();
   await expect(
     page.getByRole("heading", { name: "Transactions", exact: true }),
