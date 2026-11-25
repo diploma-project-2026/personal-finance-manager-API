@@ -1,0 +1,18 @@
+name: API documentation validation
+on:
+  push:
+    paths: ['docs/api/**', '.github/workflows/api-documentation.yml', 'src/main/java/**']
+  pull_request:
+    paths: ['docs/api/**', '.github/workflows/api-documentation.yml', 'src/main/java/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  openapi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npx --yes @redocly/cli lint docs/api/openapi.yaml --extends minimal

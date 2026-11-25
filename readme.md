@@ -113,7 +113,7 @@ The application uses version-controlled migration files rather than manually mai
 
 The database documentation is located in the `docs` directory.
 
-- [Database Architecture](docs/architecture.md)
+- [Database Architecture](docs/ARCHITECTURE.md)
 - [Data Dictionary](docs/DATA_DICTIONARY.md)
 - [Logical Database Schema](docs/LOGICAL_SCHEMA.md)
 - [Current Database Diagram](docs/DB_Scheme.png)
@@ -198,3 +198,13 @@ The materials include:
 - Instructions for configuring and running the application
 
 The database structure is maintained using version-controlled Liquibase migration scripts.
+
+## API Documentation — Stage 3
+
+- [API documentation index](docs/api/README.md)
+- [OpenAPI specification](docs/api/openapi.yaml)
+- [Getting started](docs/api/guides/GETTING_STARTED.md)
+- [Integration tutorial](docs/api/guides/INTEGRATION.md)
+
+The current backend is a local development API without HTTP authentication. Do not expose it publicly. Use the documentation setup guide for disposable development data. The separate [front-end review](frontend/pfm-frontend/README.md) uses a mock API and is not connected to the Java API.
+notepad docs/api/README.md

@@ -1,0 +1,955 @@
+openapi: 3.0.3
+info:
+  title: Personal Finance Manager Backend API
+  version: 0.0.1
+  description: As-built local development contract for the Spring Boot controllers.
+    No HTTP authentication is implemented. Do not expose publicly. Examples are illustrative,
+    not captured live responses.
+servers:
+  - url: http://localhost:8080
+    description: Local Spring Boot
+security: []
+tags:
+  - name: Users
+    description: User profile and preferred currency management.
+  - name: Transactions
+    description: Transaction management, history and date filtering.
+  - name: Receipts
+    description: Receipt upload initialization and confirmation.
+paths:
+  /api/users/{id}:
+    get:
+      operationId: getUser
+      tags:
+        - Users
+      summary: Get user by ID
+      description: Get user by ID Local development API; caller identity is not authenticated.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              example:
+                id: 1
+                email: review@example.test
+                currencyCode: EUR
+        '400':
+          description: Malformed request or invalid parameter Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/users/1
+        '500':
+          description: User not found (unmapped UserNotFoundException) Default Spring
+            error response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/users/1
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+    put:
+      operationId: updateUser
+      tags:
+        - Users
+      summary: Update nonblank email and preferred currency
+      description: Update nonblank email and preferred currency Local development
+        API; caller identity is not authenticated.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              example:
+                id: 1
+                email: updated@example.test
+                currencyCode: EUR
+        '400':
+          description: Malformed request or invalid parameter Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/users/1
+        '500':
+          description: User not found; currency not found; or user already exists
+            with this email Default Spring error response; message visibility depends
+            on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/users/1
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+            example:
+              email: updated@example.test
+              currencyCode: EUR
+    delete:
+      operationId: deleteUser
+      tags:
+        - Users
+      summary: Delete user; foreign key constraints may prevent deletion
+      description: Delete user; foreign key constraints may prevent deletion Local
+        development API; caller identity is not authenticated.
+      responses:
+        '204':
+          description: No content
+        '400':
+          description: Malformed request or invalid parameter Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/users/1
+        '500':
+          description: Unhandled service or persistence exception Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/users/1
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+  /api/users/{userId}/transactions:
+    post:
+      operationId: createTransaction
+      tags:
+        - Transactions
+      summary: Create a positive-amount transaction
+      description: Create a positive-amount transaction Local development API; caller
+        identity is not authenticated.
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+              example:
+                id: 1
+                userId: 1
+                amount: 15.25
+                currencyCode: EUR
+                transactionDate: '2026-11-25'
+                description: Groceries
+        '400':
+          description: Amount must be positive; transaction date is required; currency
+            code is required; or malformed request Default Spring error response;
+            message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/users/1/transactions
+        '404':
+          description: User not found or currency not found Default Spring error response;
+            message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 404
+                error: Not Found
+                path: /api/users/1/transactions
+        '500':
+          description: Unhandled service or persistence exception Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/users/1/transactions
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+            example:
+              amount: 15.25
+              currencyCode: EUR
+              transactionDate: '2026-11-25'
+              description: Groceries
+    get:
+      operationId: getHistory
+      tags:
+        - Transactions
+      summary: List transactions ordered by transaction date descending; unknown user
+        returns empty array
+      description: List transactions ordered by transaction date descending; unknown
+        user returns empty array Local development API; caller identity is not authenticated.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponse'
+              example:
+                - id: 1
+                  userId: 1
+                  amount: 15.25
+                  currencyCode: EUR
+                  transactionDate: '2026-11-25'
+                  description: Groceries
+        '400':
+          description: Malformed request or invalid parameter Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/users/1/transactions
+        '500':
+          description: Unhandled service or persistence exception Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/users/1/transactions
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+  /api/users/{userId}/transactions/recent:
+    get:
+      operationId: getRecent
+      tags:
+        - Transactions
+      summary: Return up to five transactions by date descending
+      description: Return up to five transactions by date descending Local development
+        API; caller identity is not authenticated.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponse'
+              example:
+                - id: 1
+                  userId: 1
+                  amount: 15.25
+                  currencyCode: EUR
+                  transactionDate: '2026-11-25'
+                  description: Groceries
+        '400':
+          description: Malformed request or invalid parameter Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/users/1/transactions/recent
+        '500':
+          description: Unhandled service or persistence exception Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/users/1/transactions/recent
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+  /api/users/{userId}/transactions/date/{date}:
+    get:
+      operationId: getByDate
+      tags:
+        - Transactions
+      summary: List transactions for an ISO calendar date
+      description: List transactions for an ISO calendar date Local development API;
+        caller identity is not authenticated.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponse'
+              example:
+                - id: 1
+                  userId: 1
+                  amount: 15.25
+                  currencyCode: EUR
+                  transactionDate: '2026-11-25'
+                  description: Groceries
+        '400':
+          description: Malformed request or invalid parameter Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/users/1/transactions/date/2026-11-25
+        '500':
+          description: Unhandled service or persistence exception Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/users/1/transactions/date/2026-11-25
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+          example: '2026-11-25'
+  /api/users/{userId}/transactions/filter:
+    get:
+      operationId: getByDateRange
+      tags:
+        - Transactions
+      summary: List transactions in inclusive date range, ordered by date descending
+      description: List transactions in inclusive date range, ordered by date descending
+        Local development API; caller identity is not authenticated.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponse'
+              example:
+                - id: 1
+                  userId: 1
+                  amount: 15.25
+                  currencyCode: EUR
+                  transactionDate: '2026-11-25'
+                  description: Groceries
+        '400':
+          description: Invalid date range or missing/malformed date parameter Default
+            Spring error response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/users/1/transactions/filter
+        '500':
+          description: Unhandled service or persistence exception Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/users/1/transactions/filter
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          example: '2026-11-25'
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          example: '2026-11-25'
+  /api/users/{userId}/transactions/{transactionId}:
+    get:
+      operationId: getTransaction
+      tags:
+        - Transactions
+      summary: Get transaction belonging to supplied user ID
+      description: Get transaction belonging to supplied user ID Local development
+        API; caller identity is not authenticated.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+              example:
+                id: 1
+                userId: 1
+                amount: 15.25
+                currencyCode: EUR
+                transactionDate: '2026-11-25'
+                description: Groceries
+        '400':
+          description: Malformed request or invalid parameter Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/users/1/transactions/1
+        '404':
+          description: Transaction not found (including mismatched user ID) Default
+            Spring error response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 404
+                error: Not Found
+                path: /api/users/1/transactions/1
+        '500':
+          description: Unhandled service or persistence exception Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/users/1/transactions/1
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+    put:
+      operationId: updateTransaction
+      tags:
+        - Transactions
+      summary: Replace transaction amount, currency, date and description
+      description: Replace transaction amount, currency, date and description Local
+        development API; caller identity is not authenticated.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+              example:
+                id: 1
+                userId: 1
+                amount: 20
+                currencyCode: EUR
+                transactionDate: '2026-11-25'
+                description: Groceries
+        '400':
+          description: Amount must be positive; transaction date is required; currency
+            code is required; or malformed request Default Spring error response;
+            message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/users/1/transactions/1
+        '404':
+          description: Transaction not found or currency not found Default Spring
+            error response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 404
+                error: Not Found
+                path: /api/users/1/transactions/1
+        '500':
+          description: Unhandled service or persistence exception Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/users/1/transactions/1
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+            example:
+              amount: 20
+              currencyCode: EUR
+              transactionDate: '2026-11-25'
+              description: Groceries
+    delete:
+      operationId: deleteTransaction
+      tags:
+        - Transactions
+      summary: Delete transaction belonging to supplied user ID
+      description: Delete transaction belonging to supplied user ID Local development
+        API; caller identity is not authenticated.
+      responses:
+        '204':
+          description: No content
+        '400':
+          description: Malformed request or invalid parameter Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/users/1/transactions/1
+        '404':
+          description: Transaction not found (including mismatched user ID) Default
+            Spring error response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 404
+                error: Not Found
+                path: /api/users/1/transactions/1
+        '500':
+          description: Unhandled service or persistence exception Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/users/1/transactions/1
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+  /api/receipts/upload-init:
+    post:
+      operationId: initializeUpload
+      tags:
+        - Receipts
+      summary: Create pending receipt and signed Cloudinary upload parameters
+      description: Create pending receipt and signed Cloudinary upload parameters
+        Local development API; caller identity is not authenticated.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptUploadInitResponse'
+              example:
+                receiptId: 1
+                status: PENDING_UPLOAD
+                uploadUrl: https://api.cloudinary.com/v1_1/example/image/upload
+                cloudName: example
+                apiKey: EXAMPLE_KEY
+                timestamp: 1795620000
+                publicId: receipts/1/example-uuid
+                signature: EXAMPLE_SIGNATURE
+        '400':
+          description: Malformed request or invalid parameter Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/receipts/upload-init
+        '500':
+          description: User not found or upload signing/persistence failure Default
+            Spring error response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/receipts/upload-init
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+  /api/receipts/{receiptId}/upload-complete:
+    post:
+      operationId: completeUpload
+      tags:
+        - Receipts
+      summary: Validate public ID and Cloudinary URL prefix and mark receipt UPLOADED
+      description: Validate public ID and Cloudinary URL prefix and mark receipt UPLOADED
+        Local development API; caller identity is not authenticated.
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Malformed request or invalid parameter Default Spring error
+            response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 400
+                error: Bad Request
+                path: /api/receipts/1/upload-complete
+        '500':
+          description: Receipt not found; receipt is not waiting for upload; invalid
+            Cloudinary public id; missing or invalid Cloudinary URL Default Spring
+            error response; message visibility depends on configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: '2026-11-25T20:00:00Z'
+                status: 500
+                error: Internal Server Error
+                path: /api/receipts/1/upload-complete
+      parameters:
+        - name: receiptId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptUploadCompleteRequest'
+            example:
+              publicId: receipts/1/example-uuid
+              secureUrl: https://res.cloudinary.com/example/image/upload/example.jpg
+components:
+  schemas:
+    TransactionRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          description: Positive monetary amount; database precision 19, scale 2.
+        currencyCode:
+          type: string
+          description: Existing currency code; case-sensitive lookup.
+        transactionDate:
+          type: string
+          format: date
+        description:
+          type: string
+          nullable: true
+          description: Optional description; database limit 500 characters.
+      required:
+        - amount
+        - currencyCode
+        - transactionDate
+    TransactionResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        amount:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          description: Positive monetary amount; database precision 19, scale 2.
+        currencyCode:
+          type: string
+          description: Existing currency code; case-sensitive lookup.
+        transactionDate:
+          type: string
+          format: date
+        description:
+          type: string
+          nullable: true
+          description: Optional description; database limit 500 characters.
+      required:
+        - id
+        - userId
+        - amount
+        - currencyCode
+        - transactionDate
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+        currencyCode:
+          type: string
+      required:
+        - id
+        - email
+        - currencyCode
+    UpdateUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          nullable: true
+          description: Null or blank leaves unchanged; duplicate email fails.
+        currencyCode:
+          type: string
+          nullable: true
+          description: Null or blank leaves unchanged.
+    ReceiptUploadCompleteRequest:
+      type: object
+      properties:
+        publicId:
+          type: string
+        secureUrl:
+          type: string
+      required:
+        - publicId
+        - secureUrl
+    ReceiptUploadInitResponse:
+      type: object
+      properties:
+        receiptId:
+          type: integer
+          format: int64
+        status:
+          type: string
+          enum:
+            - PENDING_UPLOAD
+        uploadUrl:
+          type: string
+        cloudName:
+          type: string
+        apiKey:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+        publicId:
+          type: string
+        signature:
+          type: string
+      required:
+        - receiptId
+        - status
+        - uploadUrl
+        - cloudName
+        - apiKey
+        - timestamp
+        - publicId
+        - signature
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        status:
+          type: integer
+        error:
+          type: string
+        path:
+          type: string
+        message:
+          type: string

@@ -28,7 +28,21 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<aws.sdk.version>2.39.2</aws.sdk.version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>${aws.sdk.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -96,6 +110,12 @@
 			<artifactId>mapstruct-processor</artifactId>
 			<version>1.6.3</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http5</artifactId>
+			<version>2.5.0</version>
 		</dependency>
 	</dependencies>
 

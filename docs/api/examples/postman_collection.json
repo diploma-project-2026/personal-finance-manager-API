@@ -1,0 +1,170 @@
+{
+  "info": {
+    "name": "PFM local API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "userId",
+      "value": "1"
+    },
+    {
+      "key": "transactionId",
+      "value": "1"
+    },
+    {
+      "key": "receiptId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "getUser",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/users/{{userId}}",
+        "description": "Get user by ID Local development API; caller identity is not authenticated."
+      }
+    },
+    {
+      "name": "updateUser",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/api/users/{{userId}}",
+        "description": "Update nonblank email and preferred currency Local development API; caller identity is not authenticated.",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"updated@example.test\",\n  \"currencyCode\": \"EUR\"\n}"
+        }
+      }
+    },
+    {
+      "name": "deleteUser",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/users/{{userId}}",
+        "description": "Delete user; foreign key constraints may prevent deletion Local development API; caller identity is not authenticated."
+      }
+    },
+    {
+      "name": "createTransaction",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/users/{{userId}}/transactions",
+        "description": "Create a positive-amount transaction Local development API; caller identity is not authenticated.",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 15.25,\n  \"currencyCode\": \"EUR\",\n  \"transactionDate\": \"2026-11-25\",\n  \"description\": \"Groceries\"\n}"
+        }
+      }
+    },
+    {
+      "name": "getHistory",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/users/{{userId}}/transactions",
+        "description": "List transactions ordered by transaction date descending; unknown user returns empty array Local development API; caller identity is not authenticated."
+      }
+    },
+    {
+      "name": "getRecent",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/users/{{userId}}/transactions/recent",
+        "description": "Return up to five transactions by date descending Local development API; caller identity is not authenticated."
+      }
+    },
+    {
+      "name": "getByDate",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/users/{{userId}}/transactions/date/2026-11-25",
+        "description": "List transactions for an ISO calendar date Local development API; caller identity is not authenticated."
+      }
+    },
+    {
+      "name": "getByDateRange",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/users/{{userId}}/transactions/filter?from=2026-11-25&to=2026-11-25",
+        "description": "List transactions in inclusive date range, ordered by date descending Local development API; caller identity is not authenticated."
+      }
+    },
+    {
+      "name": "getTransaction",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/users/{{userId}}/transactions/{{transactionId}}",
+        "description": "Get transaction belonging to supplied user ID Local development API; caller identity is not authenticated."
+      }
+    },
+    {
+      "name": "updateTransaction",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/api/users/{{userId}}/transactions/{{transactionId}}",
+        "description": "Replace transaction amount, currency, date and description Local development API; caller identity is not authenticated.",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 20,\n  \"currencyCode\": \"EUR\",\n  \"transactionDate\": \"2026-11-25\",\n  \"description\": \"Groceries\"\n}"
+        }
+      }
+    },
+    {
+      "name": "deleteTransaction",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/users/{{userId}}/transactions/{{transactionId}}",
+        "description": "Delete transaction belonging to supplied user ID Local development API; caller identity is not authenticated."
+      }
+    },
+    {
+      "name": "initializeUpload",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/receipts/upload-init?userId={{userId}}",
+        "description": "Create pending receipt and signed Cloudinary upload parameters Local development API; caller identity is not authenticated."
+      }
+    },
+    {
+      "name": "completeUpload",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/receipts/{{receiptId}}/upload-complete",
+        "description": "Validate public ID and Cloudinary URL prefix and mark receipt UPLOADED Local development API; caller identity is not authenticated.",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"publicId\": \"receipts/1/example-uuid\",\n  \"secureUrl\": \"https://res.cloudinary.com/example/image/upload/example.jpg\"\n}"
+        }
+      }
+    }
+  ]
+}
